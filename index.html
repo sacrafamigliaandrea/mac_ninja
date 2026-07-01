@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mac Ninja · Le scorciatoie del Mac</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236C4CE6'/%3E%3Crect x='12' y='16' width='40' height='32' rx='7' fill='%23fff'/%3E%3Crect x='18' y='23' width='6' height='6' rx='1.5' fill='%236C4CE6'/%3E%3Crect x='29' y='23' width='6' height='6' rx='1.5' fill='%23FF7A4D'/%3E%3Crect x='40' y='23' width='6' height='6' rx='1.5' fill='%236C4CE6'/%3E%3Crect x='18' y='36' width='28' height='5' rx='2.5' fill='%23ECE6F6'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236C4CE6'/%3E%3Crect x='12' y='16' width='40' height='32' rx='7' fill='%23fff'/%3E%3Crect x='18' y='23' width='6' height='6' rx='1.5' fill='%236C4CE6'/%3E%3Crect x='29' y='23' width='6' height='6' rx='1.5' fill='%23FF7A4D'/%3E%3Crect x='40' y='23' width='6' height='6' rx='1.5' fill='%236C4CE6'/%3E%3Crect x='18' y='36' width='28' height='5' rx='2.5' fill='%23ECE6F6'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   MAC NINJA — palette dedicata "Aurora" (grape + tangerine)
+   Nuova identità: NON blu istituzionale, NON verde Wimbledon.
+   ============================================================ */
+:root{
+  /* superfici */
+  --cream:#F6F3FC; --warm:#EDE7F8; --card:#FFFFFF;
+  /* brand: viola elettrico */
+  --brand:#6C4CE6; --brand2:#8A6BF2; --brandD:#3B2A80; --brandL:rgba(108,76,230,.09);
+  /* accento caldo: corallo-mandarino */
+  --accent:#FF7A4D; --accent2:#FF9A6E; --accentL:rgba(255,122,77,.12);
+  /* oro: solo avanzamento / merito */
+  --gold:#F2A81E; --goldL:rgba(242,168,30,.14);
+  /* successo: teal (non Wimbledon) */
+  --ok:#12B5A6; --okL:rgba(18,181,166,.14);
+  /* validazione / errore: ambra, MAI rosso */
+  --warn:#E08A1E; --warnL:rgba(224,138,30,.14);
+  /* testo */
+  --ink:#241B33; --muted:#6B6280; --light:#A79FB8;
+  --brd:#E4DCF3; --brd2:#CDC0EC;
+  --shadow:0 6px 26px rgba(60,40,120,.10);
+  --shadowS:0 2px 10px rgba(60,40,120,.07);
+  /* tastiera */
+  --keyframe:#EBE4F7; --keycap:#FFFFFF; --keyedge:#E2DAF0; --keytext:#3A3050;
+
+  --body:'Atkinson Hyperlegible',Helvetica,Arial,sans-serif;
+  --head:'Lexend',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --maxw:1440px;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:var(--body); color:var(--ink); font-size:18px; line-height:1.55;
+  background:
+    radial-gradient(1200px 700px at 15% -10%, rgba(108,76,230,.12), transparent 60%),
+    radial-gradient(1000px 600px at 110% 10%, rgba(255,122,77,.10), transparent 55%),
+    var(--cream);
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--head); margin:0; letter-spacing:-.01em}
+button{font-family:var(--head); cursor:pointer}
+
+.wrap{max-width:var(--maxw); margin:0 auto; padding:22px clamp(16px,3vw,40px) 60px}
+
+/* ---- schermate ---- */
+.screen{display:none; animation:fade .35s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+/* ---- topbar ---- */
+.topbar{display:flex; align-items:center; gap:16px; margin-bottom:26px; flex-wrap:wrap}
+.logo{display:flex; align-items:center; gap:12px; cursor:pointer}
+.logo .mark{width:46px; height:46px; border-radius:13px; background:linear-gradient(135deg,var(--brand),var(--brand2));
+  display:grid; place-items:center; box-shadow:0 6px 16px rgba(108,76,230,.35); flex:none}
+.logo .mark svg{width:28px; height:28px}
+.logo b{font-family:var(--head); font-weight:800; font-size:1.5rem; line-height:1; display:block}
+.logo span{font-size:.82rem; color:var(--muted); display:block; margin-top:2px}
+.spacer{flex:1}
+.tnav{display:flex; gap:8px; flex-wrap:wrap}
+.tnav button{border:1.5px solid var(--brd2); background:var(--card); color:var(--ink); font-weight:600;
+  padding:10px 18px; border-radius:12px; font-size:.98rem; display:flex; align-items:center; gap:8px; transition:.15s}
+.tnav button svg{width:18px; height:18px}
+.tnav button:hover{border-color:var(--brand); color:var(--brand)}
+.tnav button.on{background:var(--brand); border-color:var(--brand); color:#fff; box-shadow:0 6px 16px rgba(108,76,230,.28)}
+.tnav button.ghost{border-style:dashed}
+
+/* ============================================================ HOME */
+.hero{background:linear-gradient(135deg,#2A1E52,#3B2A80 55%,#5B3F9E);
+  border-radius:26px; padding:clamp(28px,5vw,60px); color:#fff; position:relative; overflow:hidden;
+  box-shadow:0 24px 60px rgba(59,42,128,.30)}
+.hero::after{content:""; position:absolute; right:-80px; top:-80px; width:340px; height:340px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,122,77,.55), transparent 65%); filter:blur(4px)}
+.hero .eyebrow{display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.14);
+  padding:7px 14px; border-radius:999px; font-family:var(--head); font-weight:600; font-size:.82rem; letter-spacing:.04em}
+.hero .eyebrow svg{width:16px; height:16px}
+.hero h1{font-size:clamp(2.4rem,6vw,4.4rem); font-weight:800; line-height:1.02; margin:20px 0 10px; position:relative}
+.hero h1 em{font-style:normal; color:var(--accent2)}
+.hero p{font-size:clamp(1.05rem,2vw,1.35rem); max-width:640px; color:#E9E3FA; margin:0 0 30px; position:relative}
+.hero-cta{display:flex; gap:14px; flex-wrap:wrap; position:relative}
+.big{border:none; border-radius:16px; padding:18px 30px; font-size:1.15rem; font-weight:700; display:flex; align-items:center; gap:12px; transition:.18s}
+.big svg{width:24px; height:24px}
+.big.primary{background:var(--accent); color:#fff; box-shadow:0 10px 26px rgba(255,122,77,.40)}
+.big.primary:hover{transform:translateY(-3px)}
+.big.on-dark{background:rgba(255,255,255,.12); color:#fff; border:1.5px solid rgba(255,255,255,.30)}
+.big.on-dark:hover{background:rgba(255,255,255,.20)}
+
+.home-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:26px}
+.hcard{background:var(--card); border:1px solid var(--brd); border-radius:18px; padding:22px; box-shadow:var(--shadowS)}
+.hcard .ic{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; margin-bottom:12px}
+.hcard .ic svg{width:24px; height:24px; color:#fff}
+.hcard h3{font-size:1.12rem; margin-bottom:6px}
+.hcard p{margin:0; color:var(--muted); font-size:.96rem}
+.stat-row{display:flex; gap:26px; margin-top:26px; flex-wrap:wrap}
+.stat b{font-family:var(--head); font-weight:800; font-size:2rem; color:var(--brand); display:block; line-height:1}
+.stat span{color:var(--muted); font-size:.9rem}
+
+/* ============================================================ STUDIO */
+.study-layout{display:grid; grid-template-columns:210px minmax(0,1fr) minmax(0,1.15fr); gap:20px; align-items:start}
+
+/* sidebar sessioni */
+.sessions{position:sticky; top:16px; display:flex; flex-direction:column; gap:7px}
+.sessions .lbl{font-family:var(--head); font-weight:700; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--light); margin:2px 4px 6px}
+.sbtn{display:flex; align-items:center; gap:11px; text-align:left; border:1.5px solid var(--brd); background:var(--card);
+  padding:9px 11px; border-radius:13px; font-family:var(--head); font-weight:600; font-size:.92rem; color:var(--ink); transition:.14s; width:100%}
+.sbtn .num{width:26px; height:26px; border-radius:8px; flex:none; display:grid; place-items:center; color:#fff;
+  font-family:var(--mono); font-size:.82rem; font-weight:700}
+.sbtn:hover{border-color:var(--brd2); transform:translateX(2px)}
+.sbtn.on{border-color:transparent; color:#fff; box-shadow:var(--shadowS)}
+.sbtn.on .num{background:rgba(255,255,255,.25)!important}
+.sbtn.challenge{margin-top:8px; border-style:dashed; border-color:var(--gold); color:var(--gold)}
+.sbtn.challenge .num{background:var(--gold)}
+.sbtn.challenge:hover{background:var(--goldL)}
+
+/* colonna sinistra: card di riferimento */
+.ref-card{background:var(--card); border:1px solid var(--brd); border-radius:20px; overflow:hidden; box-shadow:var(--shadow)}
+.ref-head{padding:20px 22px; color:#fff; position:relative}
+.ref-head .kick{font-family:var(--head); font-weight:600; font-size:.8rem; letter-spacing:.05em; opacity:.9}
+.ref-head h2{font-size:1.55rem; margin-top:3px}
+.ref-head .cnt{position:absolute; right:20px; top:20px; background:rgba(255,255,255,.22); font-family:var(--mono);
+  font-weight:700; font-size:.8rem; padding:5px 11px; border-radius:999px}
+.ref-list{padding:8px 10px 14px}
+.ref-item{display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:12px; transition:.12s}
+.ref-item:hover{background:var(--brandL)}
+.ref-item .rn{width:24px; height:24px; flex:none; border-radius:7px; background:var(--warm); color:var(--brand);
+  font-family:var(--mono); font-weight:700; font-size:.78rem; display:grid; place-items:center}
+.ref-item .rname{flex:1; font-size:.98rem; font-weight:400}
+.ref-item .combo{display:flex; gap:5px; flex:none; flex-wrap:wrap; justify-content:flex-end}
+
+/* keycap chip */
+.kc{font-family:var(--mono); font-weight:700; font-size:.8rem; min-width:26px; height:26px; padding:0 8px;
+  display:inline-flex; align-items:center; justify-content:center; gap:0; background:linear-gradient(#fff,#F3EFFA);
+  border:1px solid var(--keyedge); border-bottom-width:2.5px; border-radius:7px; color:var(--keytext)}
+.plus{color:var(--light); font-weight:700; align-self:center; font-family:var(--head); font-size:.85rem}
+
+/* colonna destra: flashcard */
+.study-right h3.rtit{font-family:var(--head); font-weight:700; font-size:1.05rem; margin:2px 2px 4px; display:flex; align-items:center; gap:9px}
+.study-right h3.rtit svg{width:20px; height:20px; color:var(--accent)}
+.rsub{color:var(--muted); font-size:.92rem; margin:0 2px 14px}
+.flash-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:13px}
+.flip{perspective:1100px; height:132px; cursor:pointer; border:none; background:none; padding:0; font-family:var(--body); text-align:inherit}
+.flip:focus-visible{outline:3px solid var(--brand); outline-offset:3px; border-radius:16px}
+.flip-in{position:relative; width:100%; height:100%; transition:transform .55s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:16px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; padding:14px; box-shadow:var(--shadowS)}
+.face.front{background:var(--card); border:1px solid var(--brd)}
+.face.front .fn{font-weight:700; font-size:.98rem; color:var(--ink); line-height:1.25}
+.face.front .hintline{position:absolute; bottom:9px; font-family:var(--head); font-size:.68rem; color:var(--light); display:flex; align-items:center; gap:5px}
+.face.front .hintline svg{width:13px; height:13px}
+.face.back{background:linear-gradient(135deg,var(--brand),var(--brand2)); color:#fff; transform:rotateY(180deg); gap:8px}
+.face.back .combo{display:flex; gap:6px; flex-wrap:wrap; justify-content:center}
+.face.back .combo .kc{background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.30); color:#fff}
+.face.back .combo .plus{color:rgba(255,255,255,.7)}
+.face.back .bl{font-size:.78rem; opacity:.9; font-family:var(--head); font-weight:500}
+
+/* ============================================================ SFIDA */
+.game-head{display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:18px}
+.hud{display:flex; gap:10px; flex-wrap:wrap}
+.chip{background:var(--card); border:1px solid var(--brd); border-radius:13px; padding:9px 15px; box-shadow:var(--shadowS); min-width:92px}
+.chip .k{font-size:.72rem; color:var(--muted); font-family:var(--head); font-weight:600; letter-spacing:.03em; text-transform:uppercase}
+.chip .v{font-family:var(--head); font-weight:800; font-size:1.35rem; line-height:1.1; color:var(--brand)}
+.chip.gold .v{color:var(--gold)}
+.chip.acc .v{color:var(--accent)}
+
+.progress{height:9px; background:var(--warm); border-radius:999px; overflow:hidden; margin-bottom:22px}
+.progress i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--brand),var(--accent)); border-radius:999px; transition:width .35s}
+
+.prompt{text-align:center; margin-bottom:14px}
+.prompt .ask{font-family:var(--head); font-weight:500; color:var(--muted); font-size:.95rem; margin-bottom:4px}
+.prompt .q{font-family:var(--head); font-weight:800; font-size:clamp(1.6rem,4vw,2.6rem); line-height:1.1}
+.prompt.correct .q{color:var(--ok)}
+.prompt.wrong .q{color:var(--warn); animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+.combo-live{display:flex; gap:8px; justify-content:center; min-height:38px; margin-bottom:16px}
+.combo-live .kc{height:34px; min-width:34px; font-size:.95rem; animation:pop .18s}
+@keyframes pop{from{transform:scale(.4); opacity:0} to{transform:scale(1); opacity:1}}
+
+.game-tools{display:flex; gap:10px; justify-content:center; margin-bottom:16px; flex-wrap:wrap}
+.tool{border:1.5px solid var(--brd2); background:var(--card); border-radius:11px; padding:8px 16px; font-weight:600; font-size:.9rem; color:var(--ink); display:flex; align-items:center; gap:7px; transition:.14s}
+.tool svg{width:16px; height:16px}
+.tool:hover{border-color:var(--gold); color:var(--gold)}
+
+/* tastiera ISO */
+.kbd-wrap{background:var(--keyframe); padding:14px; border-radius:20px; box-shadow:inset 0 2px 6px rgba(90,60,160,.10), var(--shadow);
+  display:flex; flex-direction:column; gap:6px; max-width:1000px; margin:0 auto}
+.krow{display:flex; gap:6px; height:54px}
+.krow.f{height:44px; margin-bottom:6px}
+.key{background:linear-gradient(var(--keycap),#F4F0FB); border:1px solid var(--keyedge); border-bottom-width:3px;
+  border-radius:8px; color:var(--keytext); font-family:var(--head); font-weight:600; font-size:.95rem;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; flex:1;
+  cursor:pointer; user-select:none; transition:transform .05s, background .1s, box-shadow .1s}
+.key:hover{background:linear-gradient(#fff,#EDE7F8)}
+.key:active,.key.press{transform:translateY(1px); background:var(--warm); border-bottom-width:1px}
+.key.armed{background:linear-gradient(var(--brand),var(--brand2)); color:#fff; border-color:var(--brandD)}
+.key.hint{box-shadow:0 0 0 3px var(--gold), 0 0 18px rgba(242,168,30,.6); z-index:2}
+.key svg{width:20px; height:20px}
+.key .sub{position:absolute; top:4px; right:6px; font-size:.6rem; color:var(--light); font-family:var(--mono)}
+.key .sub2{position:absolute; top:4px; left:6px; font-size:.58rem; color:var(--light)}
+.key .mn{font-size:1rem}
+.key .glyph{font-size:1.15rem; line-height:1}
+.k-al-s{align-items:flex-start; padding-left:11px}
+.k-al-e{align-items:flex-end; padding-right:11px}
+.arrows{flex:1.7; display:flex; flex-direction:column; gap:2px}
+.arr-r{display:flex; gap:2px; flex:1}
+.arr{background:linear-gradient(var(--keycap),#F4F0FB); border:1px solid var(--keyedge); border-bottom-width:2px; border-radius:5px;
+  flex:1; display:grid; place-items:center; cursor:pointer; font-size:.7rem; color:var(--keytext)}
+.arr.blank{visibility:hidden; cursor:default}
+.arr:active,.arr.press{background:var(--warm)}
+.arr.armed{background:var(--brand); color:#fff}
+.arr.hint{box-shadow:0 0 0 2px var(--gold)}
+
+/* ---- fine partita / metacognizione ---- */
+.overlay{position:fixed; inset:0; background:rgba(28,18,52,.55); backdrop-filter:blur(6px); display:none; z-index:80;
+  align-items:center; justify-content:center; padding:20px}
+.overlay.on{display:flex}
+.modal{background:var(--card); border-radius:24px; max-width:560px; width:100%; padding:34px; box-shadow:0 30px 80px rgba(30,20,60,.4); text-align:center; animation:fade .3s}
+.medal{width:88px; height:88px; margin:0 auto 14px; border-radius:26px; display:grid; place-items:center; background:var(--goldL)}
+.medal svg{width:48px; height:48px; color:var(--gold)}
+.modal h2{font-size:1.9rem}
+.modal .final{font-family:var(--head); font-weight:800; font-size:3rem; color:var(--brand); line-height:1; margin:6px 0}
+.modal .rank{color:var(--muted); font-size:1.05rem; margin-bottom:6px}
+.meta{text-align:left; background:var(--warm); border-radius:16px; padding:18px 20px; margin:22px 0 24px}
+.meta h4{font-family:var(--head); font-size:.82rem; letter-spacing:.05em; text-transform:uppercase; color:var(--brand); margin-bottom:10px; display:flex; align-items:center; gap:8px}
+.meta h4 svg{width:16px; height:16px}
+.meta ul{margin:0; padding-left:20px; color:var(--ink)}
+.meta li{margin:6px 0; font-size:.98rem}
+.modal .row{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+.mbtn{border:none; border-radius:13px; padding:13px 24px; font-weight:700; font-size:1rem}
+.mbtn.p{background:var(--brand); color:#fff}
+.mbtn.p:hover{background:var(--brandD)}
+.mbtn.s{background:var(--warm); color:var(--brand)}
+
+/* modale info docenti */
+.info-modal{max-width:620px; text-align:left}
+.info-modal h2{display:flex; align-items:center; gap:10px}
+.info-modal h2 svg{width:26px; height:26px; color:var(--brand)}
+.tags{display:flex; gap:7px; flex-wrap:wrap; margin:14px 0 18px}
+.tag{background:var(--brandL); color:var(--brand); font-family:var(--head); font-weight:600; font-size:.8rem; padding:5px 12px; border-radius:999px}
+.info-modal h4{font-family:var(--head); margin:16px 0 5px; color:var(--ink)}
+.info-modal p{margin:0 0 8px; color:var(--muted); font-size:.96rem}
+.close-x{position:absolute; top:18px; right:18px; width:34px; height:34px; border-radius:10px; border:1px solid var(--brd);
+  background:var(--card); display:grid; place-items:center; color:var(--muted)}
+.close-x svg{width:18px; height:18px}
+
+/* ---- responsive ---- */
+@media(max-width:960px){
+  .study-layout{grid-template-columns:1fr}
+  .sessions{position:static; flex-direction:row; flex-wrap:wrap}
+  .sessions .lbl{width:100%}
+  .sbtn{width:auto}
+  .sbtn.challenge{margin-top:0}
+  .krow{height:46px}
+}
+@media(max-width:620px){
+  body{font-size:17px}
+  .kbd-wrap{padding:8px; border-radius:14px}
+  .krow{height:38px; gap:4px}
+  .key{font-size:.72rem; border-radius:6px}
+  .key .sub{font-size:.5rem}
+}
+.foot{margin-top:40px; text-align:center; color:var(--light); font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo" onclick="go('home')">
+      <div class="mark">
+        <svg viewBox="0 0 32 32" fill="none"><rect x="4" y="8" width="24" height="17" rx="4" fill="#fff"/><rect x="8" y="12" width="4" height="4" rx="1.2" fill="#6C4CE6"/><rect x="14" y="12" width="4" height="4" rx="1.2" fill="#FF7A4D"/><rect x="20" y="12" width="4" height="4" rx="1.2" fill="#6C4CE6"/><rect x="8" y="19" width="16" height="3" rx="1.5" fill="#ECE6F6"/></svg>
+      </div>
+      <div><b>Mac Ninja</b><span>Le scorciatoie del Mac · Lab Sacra Famiglia</span></div>
+    </div>
+    <div class="spacer"></div>
+    <nav class="tnav" id="tnav">
+      <button data-nav="home" onclick="go('home')">Home</button>
+      <button data-nav="study" onclick="go('study')" id="navStudy"></button>
+      <button data-nav="game" onclick="go('game')" id="navGame"></button>
+      <button class="ghost" onclick="openInfo()" id="navInfo"></button>
+    </nav>
+  </div>
+
+  <!-- ============ HOME ============ -->
+  <section id="s-home" class="screen active">
+    <div class="hero">
+      <span class="eyebrow" id="heroEyebrow"></span>
+      <h1>Diventa un <em>ninja</em><br>della tastiera Mac</h1>
+      <p>Studia le scorciatoie sessione per sessione con le flashcard, poi mettiti alla prova sulla tastiera vera. Veloce, senza distrazioni, fatto per il laboratorio.</p>
+      <div class="hero-cta">
+        <button class="big primary" onclick="go('study')" id="heroStudy"></button>
+        <button class="big on-dark" onclick="go('game')" id="heroGame"></button>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b id="stSessions">0</b><span>sessioni di studio</span></div>
+        <div class="stat"><b id="stCmds">0</b><span>scorciatoie</span></div>
+        <div class="stat"><b id="stCards">0</b><span>flashcard girevoli</span></div>
+      </div>
+    </div>
+
+    <div class="home-grid">
+      <div class="hcard">
+        <div class="ic" style="background:var(--brand)"><span id="icStudy"></span></div>
+        <h3>1 · Studia</h3>
+        <p>Ogni sessione: a sinistra la scheda-comandi, a destra le flashcard da girare per memorizzare.</p>
+      </div>
+      <div class="hcard">
+        <div class="ic" style="background:var(--accent)"><span id="icGame"></span></div>
+        <h3>2 · Sfida</h3>
+        <p>Ti diamo l'azione ("Copia"), tu premi la combinazione giusta sulla tastiera italiana ISO.</p>
+      </div>
+      <div class="hcard">
+        <div class="ic" style="background:var(--ok)"><span id="icBrain"></span></div>
+        <h3>3 · Rifletti</h3>
+        <p>A fine sfida ti fermi un attimo: cosa hai imparato, cosa userai davvero domani in laboratorio.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STUDIO ============ -->
+  <section id="s-study" class="screen">
+    <div class="study-layout">
+      <aside class="sessions" id="sessionNav"></aside>
+      <div class="ref-card" id="refCard"></div>
+      <div class="study-right" id="studyRight"></div>
+    </div>
+  </section>
+
+  <!-- ============ SFIDA ============ -->
+  <section id="s-game" class="screen">
+    <div class="game-head">
+      <div>
+        <h2 style="font-size:1.4rem" id="gameLevelName">Sfida</h2>
+        <p style="margin:2px 0 0; color:var(--muted); font-size:.92rem">Premi la combinazione giusta sulla tastiera</p>
+      </div>
+      <div class="hud">
+        <div class="chip"><div class="k">Sessione</div><div class="v" id="hudLevel">1/10</div></div>
+        <div class="chip acc"><div class="k">Serie</div><div class="v" id="hudStreak">0</div></div>
+        <div class="chip gold"><div class="k">Punti</div><div class="v" id="hudScore">0</div></div>
+      </div>
+    </div>
+    <div class="progress"><i id="progBar"></i></div>
+
+    <div class="prompt" id="prompt">
+      <div class="ask">Esegui il comando</div>
+      <div class="q" id="qText">Pronto?</div>
+    </div>
+    <div class="combo-live" id="comboLive"></div>
+    <div class="game-tools">
+      <button class="tool" onclick="showHint()"><span id="hintIc"></span>Mostra indizio</button>
+      <button class="tool" onclick="clearInput()"><span id="clearIc"></span>Pulisci</button>
+    </div>
+
+    <div class="kbd-wrap" id="keyboard"></div>
+  </section>
+
+  <div class="foot">Mac Ninja · web app didattica single-file · Andrea Cerioli, Animatore Digitale</div>
+</div>
+
+<!-- OVERLAY: fine partita + metacognizione -->
+<div class="overlay" id="endOverlay">
+  <div class="modal">
+    <div class="medal" id="endMedal"></div>
+    <h2>Sfida completata</h2>
+    <div class="final" id="endScore">0</div>
+    <div class="rank" id="endRank"></div>
+    <div class="meta">
+      <h4><span id="metaIc"></span>Un minuto per riflettere</h4>
+      <ul>
+        <li>Quale scorciatoia ti è entrata subito in testa?</li>
+        <li>Quale hai sbagliato più volte, e perché?</li>
+        <li>Quale userai <b>davvero</b> domani sul Mac del laboratorio?</li>
+      </ul>
+    </div>
+    <div class="row">
+      <button class="mbtn p" onclick="startGame()">Rigioca</button>
+      <button class="mbtn s" onclick="go('study'); closeEnd()">Torna a studiare</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY: info docenti -->
+<div class="overlay" id="infoOverlay">
+  <div class="modal info-modal" style="position:relative">
+    <button class="close-x" onclick="closeInfo()"><span id="closeIc"></span></button>
+    <h2><span id="infoIc"></span>Info per i docenti</h2>
+    <div class="tags">
+      <span class="tag">Cittadinanza digitale</span>
+      <span class="tag">Competenza strumentale</span>
+      <span class="tag">Metacognizione</span>
+      <span class="tag">Autonomia</span>
+    </div>
+    <p><b>Obiettivo.</b> Portare gli studenti (~11 anni) a padroneggiare le scorciatoie da tastiera del Mac del laboratorio, passando dal riconoscimento all'esecuzione fluida.</p>
+    <h4>Cornice pedagogica</h4>
+    <p><b>Bruner</b> — le flashcard girevoli fanno scoprire la coppia <i>azione → combinazione</i> interagendo, non leggendo una lista.</p>
+    <p><b>Dewey</b> — la Sfida è <i>learning by doing</i>: si impara premendo i tasti, non memorizzando a freddo.</p>
+    <p><b>Vygotskij</b> — il pulsante "Mostra indizio" è scaffolding calibrato: illumina i tasti giusti quando lo studente è in difficoltà, poi si ritira.</p>
+    <p><b>Metacognizione</b> — la schermata finale chiude il cerchio con tre domande sull'apprendimento.</p>
+    <h4>Struttura</h4>
+    <p>10 sessioni tematiche (Sistema, Finder, Finestre, Browser, Testo, Screenshot, Launcher, File, Utility, Ricerca). Studio a sinistra (scheda) + destra (flashcard); Sfida sulla tastiera ISO italiana con feedback immediato — <b>ambra per l'errore, mai rosso</b>.</p>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ICONE SVG INLINE — zero emoji (regola design system)
+   ============================================================ */
+const ICON = {
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h6v16H6a2 2 0 0 0-2 2z"/><path d="M20 5a2 2 0 0 0-2-2h-6v16h6a2 2 0 0 1 2 2z"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>',
+  brain:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 0V4a2 2 0 0 0-2 0"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 0"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg>',
+  spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/></svg>',
+  flip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>',
+  bulb:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.3 1 2.5h6c0-1.2.3-1.8 1-2.5A6 6 0 0 0 12 3Z"/></svg>',
+  eraser:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 15 6-6 7 7-3 3H8z"/><path d="M11 9l5-5 4 4-5 5"/><path d="M6 21h12"/></svg>',
+  trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/><path d="M10 15h4l.5 3h-5z"/><path d="M8 21h8"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  /* icone tasti media */
+  sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/></svg>',
+  mission:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="6" rx="1.5"/><rect x="14" y="14" width="7" height="6" rx="1.5"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg>',
+  moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10Z"/></svg>',
+  rew:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 6 5 12l6 6zM19 6l-6 6 6 6z"/></svg>',
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+  ffw:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 6v12l6-6zM5 6v12l6-6z"/></svg>',
+  mute:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 4 6M21 9l-4 6"/></svg>',
+  vdown:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 12h4"/></svg>',
+  vup:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 12h4M19 10v4"/></svg>',
+  grid4:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="2"/><circle cx="17" cy="7" r="2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>'
+};
+function ic(n){return ICON[n]||''}
+
+/* ============================================================
+   DATI — 10 sessioni, scorciatoie reali macOS (nessun dato inventato)
+   ============================================================ */
+const sessions = [
+ {n:1, title:'Sistema & Generale', color:'#6C4CE6', cmds:[
+   ['Spotlight (cerca ovunque)',['Cmd','Space']],
+   ['Cambia app aperta',['Cmd','Tab']],
+   ['Mission Control',['Ctrl','Up']],
+   ['Mostra la Scrivania',['Fn','F11']],
+   ['Blocca lo schermo',['Ctrl','Cmd','Q']],
+   ['Uscita forzata app',['Opt','Cmd','Esc']],
+   ['Metti in stop',['Opt','Cmd','Power']],
+   ['Spegni il Mac',['Ctrl','Opt','Cmd','Power']],
+ ]},
+ {n:2, title:'Finder', color:'#4C63E6', cmds:[
+   ['Nuova finestra Finder',['Cmd','N']],
+   ['Nuova cartella',['Shift','Cmd','N']],
+   ['Rinomina elemento',['Return']],
+   ['Sposta nel Cestino',['Cmd','Del']],
+   ['Svuota il Cestino',['Shift','Cmd','Del']],
+   ['Ottieni informazioni',['Cmd','I']],
+   ['Anteprima rapida',['Space']],
+   ['Vai alla cartella…',['Shift','Cmd','G']],
+ ]},
+ {n:3, title:'Finestre & App', color:'#12B5A6', cmds:[
+   ['Riduci a icona',['Cmd','M']],
+   ['Chiudi finestra',['Cmd','W']],
+   ['Esci dall’app',['Cmd','Q']],
+   ['Riduci tutte le finestre',['Opt','Cmd','M']],
+   ['Nascondi app in primo piano',['Cmd','H']],
+   ['Affianca a sinistra',['Ctrl','Opt','Left']],
+   ['Affianca a destra',['Ctrl','Opt','Right']],
+   ['Schermo intero',['Ctrl','Cmd','F']],
+ ]},
+ {n:4, title:'Tab & Browser', color:'#FF7A4D', cmds:[
+   ['Nuovo tab',['Cmd','T']],
+   ['Chiudi tab',['Cmd','W']],
+   ['Tab successivo',['Ctrl','Tab']],
+   ['Tab precedente',['Ctrl','Shift','Tab']],
+   ['Ricarica la pagina',['Cmd','R']],
+   ['Riapri ultimo tab',['Shift','Cmd','T']],
+   ['Barra degli indirizzi',['Cmd','L']],
+   ['Cronologia',['Cmd','Y']],
+ ]},
+ {n:5, title:'Testo & Modifica', color:'#9A3FD1', cmds:[
+   ['Copia',['Cmd','C']],
+   ['Taglia',['Cmd','X']],
+   ['Incolla',['Cmd','V']],
+   ['Seleziona tutto',['Cmd','A']],
+   ['Annulla',['Cmd','Z']],
+   ['Ripristina',['Shift','Cmd','Z']],
+   ['Trova nel testo',['Cmd','F']],
+   ['Grassetto',['Cmd','B']],
+ ]},
+ {n:6, title:'Screenshot', color:'#E23E8C', cmds:[
+   ['Schermo intero',['Shift','Cmd','3']],
+   ['Area selezionata',['Shift','Cmd','4']],
+   ['Barra Screenshot',['Shift','Cmd','5']],
+   ['Registra lo schermo',['Shift','Cmd','5']],
+   ['Copia schermo negli appunti',['Ctrl','Shift','Cmd','3']],
+   ['Copia area negli appunti',['Ctrl','Shift','Cmd','4']],
+   ['Cattura una finestra',['Shift','Cmd','4','Space']],
+   ['Annulla la cattura',['Esc']],
+ ]},
+ {n:7, title:'Launcher & Spotlight', color:'#12B886', cmds:[
+   ['Spotlight',['Cmd','Space']],
+   ['Launchpad',['F4']],
+   ['Cartella Applicazioni',['Shift','Cmd','A']],
+   ['Cartella Utility',['Shift','Cmd','U']],
+   ['Vai alla Home',['Shift','Cmd','H']],
+   ['Vai al Computer',['Shift','Cmd','C']],
+   ['Cartella Documenti',['Shift','Cmd','O']],
+   ['AirDrop',['Shift','Cmd','R']],
+ ]},
+ {n:8, title:'File & Documenti', color:'#F2A81E', cmds:[
+   ['Nuovo documento',['Cmd','N']],
+   ['Apri…',['Cmd','O']],
+   ['Salva',['Cmd','S']],
+   ['Salva con nome…',['Shift','Cmd','S']],
+   ['Stampa',['Cmd','P']],
+   ['Chiudi documento',['Cmd','W']],
+   ['Seleziona tutto',['Cmd','A']],
+   ['Esci dall’app',['Cmd','Q']],
+ ]},
+ {n:9, title:'Sistema & Utility', color:'#E8722C', cmds:[
+   ['Blocca lo schermo',['Ctrl','Cmd','Q']],
+   ['Disconnetti utente',['Shift','Cmd','Q']],
+   ['Impostazioni di Sistema',['Cmd',',']],
+   ['Mostra i Download',['Opt','Cmd','L']],
+   ['Muto / audio',['F10']],
+   ['Volume giù',['F11']],
+   ['Volume su',['F12']],
+   ['Uscita forzata',['Opt','Cmd','Esc']],
+ ]},
+ {n:10, title:'Ricerca & Aiuto', color:'#7C3AED', cmds:[
+   ['Spotlight (cerca)',['Cmd','Space']],
+   ['Menu Aiuto',['Shift','Cmd','/']],
+   ['Trova nella pagina',['Cmd','F']],
+   ['Trova successivo',['Cmd','G']],
+   ['Trova precedente',['Shift','Cmd','G']],
+   ['Barra degli indirizzi',['Cmd','L']],
+   ['Impostazioni / Preferenze',['Cmd',',']],
+   ['Seleziona tutto',['Cmd','A']],
+ ]},
+];
+
+/* etichetta di ogni tasto sulla keycap */
+const GLYPH = {Cmd:'⌘',Opt:'⌥',Ctrl:'⌃',Shift:'⇧',Return:'⏎',Del:'⌫',Tab:'⇥',Esc:'esc',Space:'spazio',Fn:'fn',
+  Up:'▲',Down:'▼',Left:'◀',Right:'▶',Power:'⏻'};
+function glyph(k){return GLYPH[k]!==undefined?GLYPH[k]:k}
+
+function comboHTML(keys){
+  return keys.map((k,i)=> (i? '<span class="plus">+</span>':'') + '<span class="kc">'+glyph(k)+'</span>').join('');
+}
+
+/* ============================================================
+   NAVIGAZIONE
+   ============================================================ */
+function go(screen){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+screen).classList.add('active');
+  document.querySelectorAll('#tnav button[data-nav]').forEach(b=>b.classList.toggle('on', b.dataset.nav===screen));
+  if(screen==='game') startGame();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================
+   HOME — riempi testi/icone/statistiche
+   ============================================================ */
+function initHome(){
+  const totCmds = sessions.reduce((a,s)=>a+s.cmds.length,0);
+  document.getElementById('stSessions').textContent = sessions.length;
+  document.getElementById('stCmds').textContent = totCmds;
+  document.getElementById('stCards').textContent = totCmds;
+  document.getElementById('heroEyebrow').innerHTML = ic('spark')+'<span>Laboratorio · iMac & iPad</span>';
+  document.getElementById('heroStudy').innerHTML = ic('book')+'<span>Inizia a studiare</span>';
+  document.getElementById('heroGame').innerHTML = ic('target')+'<span>Vai alla sfida</span>';
+  document.getElementById('icStudy').innerHTML = ic('book');
+  document.getElementById('icGame').innerHTML = ic('target');
+  document.getElementById('icBrain').innerHTML = ic('brain');
+  document.getElementById('navStudy').innerHTML = ic('book')+'Studia';
+  document.getElementById('navGame').innerHTML = ic('target')+'Sfida';
+  document.getElementById('navInfo').innerHTML = ic('info')+'Docenti';
+  document.getElementById('hintIc').innerHTML = ic('bulb');
+  document.getElementById('clearIc').innerHTML = ic('eraser');
+  document.getElementById('metaIc').innerHTML = ic('brain');
+  document.getElementById('infoIc').innerHTML = ic('info');
+  document.getElementById('closeIc').innerHTML = ic('x');
+  document.getElementById('endMedal').innerHTML = ic('trophy');
+}
+
+/* ============================================================
+   STUDIO — sidebar + scheda (sx) + flashcard (dx)
+   ============================================================ */
+let currentSession = 0;
+
+function buildSessionNav(){
+  const nav = document.getElementById('sessionNav');
+  let html = '<div class="lbl">Sessioni</div>';
+  sessions.forEach((s,i)=>{
+    html += '<button class="sbtn" data-s="'+i+'" onclick="openSession('+i+')">'
+          + '<span class="num" style="background:'+s.color+'">'+s.n+'</span>'
+          + '<span>'+s.title+'</span></button>';
+  });
+  html += '<button class="sbtn challenge" onclick="go(\'game\')"><span class="num">'+ic('target')+'</span><span>Mettiti alla prova</span></button>';
+  nav.innerHTML = html;
+}
+
+function openSession(i){
+  currentSession = i;
+  const s = sessions[i];
+  document.querySelectorAll('.sbtn[data-s]').forEach(b=>{
+    const on = (+b.dataset.s===i);
+    b.classList.toggle('on', on);
+    b.style.background = on ? s.color : '';
+  });
+
+  /* colonna sinistra: scheda di riferimento */
+  let ref = '<div class="ref-head" style="background:linear-gradient(135deg,'+s.color+','+shade(s.color,20)+')">'
+          + '<div class="kick">Sessione '+s.n+'</div><h2>'+s.title+'</h2>'
+          + '<span class="cnt">'+s.cmds.length+' comandi</span></div><div class="ref-list">';
+  s.cmds.forEach((c,idx)=>{
+    ref += '<div class="ref-item"><span class="rn">'+(idx+1)+'</span>'
+         + '<span class="rname">'+c[0]+'</span>'
+         + '<span class="combo">'+comboHTML(c[1])+'</span></div>';
+  });
+  ref += '</div>';
+  document.getElementById('refCard').innerHTML = ref;
+
+  /* colonna destra: flashcard da studiare per QUESTA sessione */
+  let right = '<h3 class="rtit">'+ic('flip')+'Flashcard di questa sessione</h3>'
+            + '<p class="rsub">Tocca una carta per girarla: prima prova a indovinare la combinazione, poi controlla.</p>'
+            + '<div class="flash-grid">';
+  s.cmds.forEach(c=>{
+    right += '<button class="flip" onclick="this.classList.toggle(\'on\')" '
+           + 'onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.classList.toggle(\'on\')}">'
+           + '<div class="flip-in">'
+           + '<div class="face front"><span class="fn">'+c[0]+'</span>'
+           + '<span class="hintline">'+ic('flip')+'gira</span></div>'
+           + '<div class="face back"><span class="combo">'+comboHTML(c[1])+'</span>'
+           + '<span class="bl">'+c[1].map(glyph2).join(' + ')+'</span></div>'
+           + '</div></button>';
+  });
+  right += '</div>';
+  document.getElementById('studyRight').innerHTML = right;
+}
+
+/* etichetta testuale estesa per il retro carta */
+const WORD = {Cmd:'Cmd',Opt:'Opt',Ctrl:'Ctrl',Shift:'Shift',Return:'Invio',Del:'Canc',Tab:'Tab',Esc:'Esc',
+  Space:'Spazio',Fn:'Fn',Up:'↑',Down:'↓',Left:'←',Right:'→',Power:'Power'};
+function glyph2(k){return WORD[k]!==undefined?WORD[k]:k}
+
+/* schiarisce un hex per il gradiente header */
+function shade(hex,amt){
+  const n=parseInt(hex.slice(1),16);
+  let r=(n>>16)+amt, g=((n>>8)&255)+amt, b=(n&255)+amt;
+  r=Math.min(255,r); g=Math.min(255,g); b=Math.min(255,b);
+  return '#'+((r<<16)|(g<<8)|b).toString(16).padStart(6,'0');
+}
+
+/* ============================================================
+   TASTIERA — layout ISO italiano, render da modello
+   ============================================================ */
+const KB = [
+  {row:'f', keys:[
+    {id:'Esc',lbl:'esc',flex:1.6,al:'e'},
+    {id:'F1',icon:'sun',sub:'F1'},{id:'F2',icon:'sun',sub:'F2'},{id:'F3',icon:'mission',sub:'F3'},
+    {id:'F4',icon:'grid4',sub:'F4'},{id:'F5',icon:'mic',sub:'F5'},{id:'F6',icon:'moon',sub:'F6'},
+    {id:'F7',icon:'rew',sub:'F7'},{id:'F8',icon:'play',sub:'F8'},{id:'F9',icon:'ffw',sub:'F9'},
+    {id:'F10',icon:'mute',sub:'F10'},{id:'F11',icon:'vdown',sub:'F11'},{id:'F12',icon:'vup',sub:'F12'},
+    {id:'Power',glyph:'⏻',flex:1}
+  ]},
+  {row:'', keys:[
+    {id:'\\',mn:'\\',sub:'|'},{id:'1',mn:'1',sub:'!'},{id:'2',mn:'2',sub:'"'},{id:'3',mn:'3',sub:'£'},
+    {id:'4',mn:'4',sub:'$'},{id:'5',mn:'5',sub:'%'},{id:'6',mn:'6',sub:'&'},{id:'7',mn:'7',sub:'/'},
+    {id:'8',mn:'8',sub:'('},{id:'9',mn:'9',sub:')'},{id:'0',mn:'0',sub:'='},{id:"'",mn:"'",sub:'?'},
+    {id:'ì',mn:'ì',sub:'^'},{id:'Del',glyph:'⌫',flex:1.7,al:'e'}
+  ]},
+  {row:'', keys:[
+    {id:'Tab',lbl:'tab',flex:1.6,al:'s'},
+    {id:'Q',mn:'Q'},{id:'W',mn:'W'},{id:'E',mn:'E'},{id:'R',mn:'R'},{id:'T',mn:'T'},{id:'Y',mn:'Y'},
+    {id:'U',mn:'U'},{id:'I',mn:'I'},{id:'O',mn:'O'},{id:'P',mn:'P'},
+    {id:'è',mn:'è',sub:'é'},{id:'+',mn:'+',sub:'*'},{spacer:0.9}
+  ]},
+  {row:'', keys:[
+    {id:'Caps',lbl:'caps',flex:1.9,al:'s'},
+    {id:'A',mn:'A'},{id:'S',mn:'S'},{id:'D',mn:'D'},{id:'F',mn:'F'},{id:'G',mn:'G'},{id:'H',mn:'H'},
+    {id:'J',mn:'J'},{id:'K',mn:'K'},{id:'L',mn:'L'},
+    {id:'ò',mn:'ò',sub:'@'},{id:'à',mn:'à',sub:'#'},{id:'ù',mn:'ù',sub:'§'},
+    {id:'Return',glyph:'⏎',flex:1.6,al:'e'}
+  ]},
+  {row:'', keys:[
+    {id:'Shift',glyph:'⇧',flex:1.3,al:'s'},
+    {id:'<',mn:'<',sub:'>'},
+    {id:'Z',mn:'Z'},{id:'X',mn:'X'},{id:'C',mn:'C'},{id:'V',mn:'V'},{id:'B',mn:'B'},{id:'N',mn:'N'},{id:'M',mn:'M'},
+    {id:',',mn:',',sub:';'},{id:'.',mn:'.',sub:':'},{id:'-',mn:'-',sub:'_'},
+    {id:'Shift',glyph:'⇧',flex:2.9,al:'e'}
+  ]},
+  {row:'', keys:[
+    {id:'Fn',lbl:'fn',flex:1},{id:'Ctrl',glyph:'⌃',flex:1},{id:'Opt',glyph:'⌥',flex:1},
+    {id:'Cmd',glyph:'⌘',flex:1.4},{id:'Space',lbl:'',flex:5.5},{id:'Cmd',glyph:'⌘',flex:1.4},
+    {id:'Opt',glyph:'⌥',flex:1},
+    {arrows:true}
+  ]}
+];
+
+function buildKeyboard(){
+  const wrap = document.getElementById('keyboard');
+  let html='';
+  KB.forEach(r=>{
+    html += '<div class="krow '+(r.row==='f'?'f':'')+'">';
+    r.keys.forEach(k=>{
+      if(k.spacer!==undefined){ html += '<div style="flex:'+k.spacer+'"></div>'; return; }
+      if(k.arrows){
+        html += '<div class="arrows">'
+              + '<div class="arr-r"><div class="arr blank"></div>'
+              + '<div class="arr" data-k="Up" onclick="press(\'Up\')">▲</div>'
+              + '<div class="arr blank"></div></div>'
+              + '<div class="arr-r">'
+              + '<div class="arr" data-k="Left" onclick="press(\'Left\')">◀</div>'
+              + '<div class="arr" data-k="Down" onclick="press(\'Down\')">▼</div>'
+              + '<div class="arr" data-k="Right" onclick="press(\'Right\')">▶</div></div></div>';
+        return;
+      }
+      let inner='';
+      if(k.icon) inner = '<span>'+ic(k.icon)+'</span>';
+      else if(k.glyph) inner = '<span class="glyph">'+k.glyph+'</span>';
+      else if(k.mn!==undefined) inner = (k.sub!==undefined?'<span class="sub">'+k.sub+'</span>':'')+'<span class="mn">'+k.mn+'</span>';
+      else inner = k.lbl||'';
+      const style = 'flex:'+(k.flex||1);
+      const cls = 'key '+(k.al==='s'?'k-al-s':k.al==='e'?'k-al-e':'');
+      html += '<div class="'+cls+'" style="'+style+'" data-k="'+esc(k.id)+'" onclick="press(\''+escJs(k.id)+'\')">'
+            + (k.sub!==undefined && k.icon===undefined && k.mn===undefined ? '' : '')
+            + inner + '</div>';
+    });
+    html += '</div>';
+  });
+  wrap.innerHTML = html;
+}
+function esc(s){return String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function escJs(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
+
+/* ============================================================
+   MOTORE DELLA SFIDA
+   ============================================================ */
+/* combinazioni riproducibili sulla tastiera renderizzata */
+const KEYBOARD_KEYS = new Set(['Cmd','Opt','Ctrl','Shift','Fn','Space','Return','Del','Tab','Esc',
+  'Up','Down','Left','Right','F4','F10','F11','F12',
+  'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+  '0','1','2','3','4','5','6','7','8','9']);
+function isPlayable(keys){ return keys.every(k=>KEYBOARD_KEYS.has(k)); }
+
+/* livelli di gioco = sessioni, solo combinazioni giocabili */
+const gameLevels = sessions.map(s=>({
+  name:'Sessione '+s.n+' · '+s.title,
+  color:s.color,
+  items:s.cmds.filter(c=>isPlayable(c[1]))
+})).filter(l=>l.items.length>=3);
+
+let gLevel=0, gIndex=0, gScore=0, gStreak=0, gInput=[], gQueue=[], locked=false;
+
+function startGame(){
+  gLevel=0; gScore=0; gStreak=0; closeEnd();
+  loadLevel(0);
+}
+function loadLevel(i){
+  if(i>=gameLevels.length){ endGame(); return; }
+  gLevel=i;
+  gQueue = shuffle(gameLevels[i].items.slice());
+  gIndex=0;
+  document.getElementById('gameLevelName').textContent = gameLevels[i].name;
+  document.getElementById('hudLevel').textContent = (i+1)+'/'+gameLevels.length;
+  ask();
+}
+function ask(){
+  if(gIndex>=gQueue.length){ loadLevel(gLevel+1); return; }
+  locked=false; gInput=[]; clearArmed(); clearHint(); renderInput();
+  const p=document.getElementById('prompt'); p.className='prompt';
+  document.getElementById('qText').textContent = gQueue[gIndex][0];
+  updateHUD();
+}
+function updateHUD(){
+  document.getElementById('hudScore').textContent=gScore;
+  document.getElementById('hudStreak').textContent=gStreak;
+  const total=gameLevels.reduce((a,l)=>a+l.items.length,0);
+  let done=0; for(let i=0;i<gLevel;i++) done+=gameLevels[i].items.length; done+=gIndex;
+  document.getElementById('progBar').style.width=(done/total*100)+'%';
+}
+function press(id){
+  if(locked) return;
+  const idx=gInput.indexOf(id);
+  if(idx>=0) gInput.splice(idx,1); else gInput.push(id);
+  renderInput(); check();
+}
+function renderInput(){
+  document.getElementById('comboLive').innerHTML = gInput.map(k=>'<span class="kc">'+glyph(k)+'</span>').join('');
+  document.querySelectorAll('[data-k]').forEach(el=>{
+    el.classList.toggle('armed', gInput.includes(el.dataset.k));
+  });
+}
+function clearArmed(){ document.querySelectorAll('.armed').forEach(e=>e.classList.remove('armed')); }
+function clearInput(){ if(locked)return; gInput=[]; renderInput(); }
+
+function check(){
+  const target=gQueue[gIndex][1];
+  if(gInput.length!==target.length) return;
+  const ok=target.every(k=>gInput.includes(k));
+  const p=document.getElementById('prompt');
+  if(ok){
+    locked=true; gScore+=100+gStreak*10; gStreak++;
+    p.classList.add('correct'); document.getElementById('qText').textContent='Perfetto!';
+    updateHUD();
+    setTimeout(()=>{ gIndex++; ask(); }, 750);
+  } else {
+    locked=true; gStreak=0; gScore=Math.max(0,gScore-15);
+    p.classList.add('wrong');
+    updateHUD();
+    setTimeout(()=>{ locked=false; gInput=[]; renderInput(); p.classList.remove('wrong'); }, 650);
+  }
+}
+function showHint(){
+  if(locked) return;
+  clearHint();
+  gQueue[gIndex][1].forEach(k=>{
+    const el=document.querySelector('[data-k="'+cssEsc(k)+'"]');
+    if(el) el.classList.add('hint');
+  });
+  setTimeout(clearHint, 1400);
+}
+function clearHint(){ document.querySelectorAll('.hint').forEach(e=>e.classList.remove('hint')); }
+function cssEsc(s){ return String(s).replace(/(['"\\])/g,'\\$1'); }
+
+function endGame(){
+  document.getElementById('endScore').textContent=gScore;
+  let rank='Apprendista del Mac';
+  if(gScore>1200) rank='Utente esperto';
+  if(gScore>2400) rank='Cintura nera di tastiera';
+  if(gScore>3600) rank='Leggenda del laboratorio';
+  document.getElementById('endRank').textContent=rank;
+  document.getElementById('endOverlay').classList.add('on');
+}
+function closeEnd(){ document.getElementById('endOverlay').classList.remove('on'); }
+
+/* tastiera fisica reale → gioco */
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('s-game').classList.contains('active')) return;
+  const map={Meta:'Cmd',Alt:'Opt',Control:'Ctrl',Shift:'Shift',' ':'Space',Enter:'Return',
+    Backspace:'Del',Tab:'Tab',Escape:'Esc',ArrowUp:'Up',ArrowDown:'Down',ArrowLeft:'Left',ArrowRight:'Right'};
+  let k=map[e.key];
+  if(!k && /^[a-zA-Z]$/.test(e.key)) k=e.key.toUpperCase();
+  if(!k && /^[0-9]$/.test(e.key)) k=e.key;
+  if(k && KEYBOARD_KEYS.has(k)){ e.preventDefault(); press(k); }
+});
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+/* info docenti */
+function openInfo(){ document.getElementById('infoOverlay').classList.add('on'); }
+function closeInfo(){ document.getElementById('infoOverlay').classList.remove('on'); }
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('on'); }));
+
+/* ============================================================ INIT */
+initHome();
+buildSessionNav();
+openSession(0);
+buildKeyboard();
+</script>
+</body>
+</html>
