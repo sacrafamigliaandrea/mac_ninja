@@ -884,12 +884,62 @@ const KEYBOARD_KEYS = new Set(['Cmd','Opt','Ctrl','Shift','Fn','Space','Return',
   '0','1','2','3','4','5','6','7','8','9']);
 function isPlayable(keys){ return keys.every(k=>KEYBOARD_KEYS.has(k)); }
 
-/* livelli di gioco = sessioni, solo combinazioni giocabili */
-const gameLevels = sessions.map(s=>({
-  name:'Sessione '+s.n+' · '+s.title,
-  color:s.color,
-  items:s.cmds.filter(c=>isPlayable(c[1]))
-})).filter(l=>l.items.length>=3);
+/* Percorso di gioco GRADUALE: dai comandi più usati ogni giorno
+   (copia/incolla) fino alle combinazioni da esperti. L'ordine è per
+   difficoltà crescente, non per categoria — così i più piccoli iniziano
+   dai comandi utili e prendono confidenza prima di arrivare al resto. */
+const curriculum = [
+ {name:'Livello 1 · Copia e incolla', color:'#12B5A6', items:[
+   ['Copia',['Cmd','C']],
+   ['Incolla',['Cmd','V']],
+   ['Taglia',['Cmd','X']],
+   ['Annulla',['Cmd','Z']],
+   ['Seleziona tutto',['Cmd','A']],
+ ]},
+ {name:'Livello 2 · Scrivere e salvare', color:'#4C63E6', items:[
+   ['Salva',['Cmd','S']],
+   ['Nuovo documento',['Cmd','N']],
+   ['Apri…',['Cmd','O']],
+   ['Stampa',['Cmd','P']],
+   ['Trova nel testo',['Cmd','F']],
+   ['Grassetto',['Cmd','B']],
+ ]},
+ {name:'Livello 3 · Finestre e app', color:'#6C4CE6', items:[
+   ['Chiudi finestra',['Cmd','W']],
+   ['Riduci a icona',['Cmd','M']],
+   ['Esci dall’app',['Cmd','Q']],
+   ['Nuovo tab',['Cmd','T']],
+   ['Ricarica la pagina',['Cmd','R']],
+   ['Barra degli indirizzi',['Cmd','L']],
+ ]},
+ {name:'Livello 4 · Cercare e muoversi', color:'#9A3FD1', items:[
+   ['Spotlight (cerca ovunque)',['Cmd','Space']],
+   ['Cambia app aperta',['Cmd','Tab']],
+   ['Anteprima rapida',['Space']],
+   ['Mission Control',['Ctrl','Up']],
+   ['Ripristina',['Shift','Cmd','Z']],
+   ['Riapri ultimo tab',['Shift','Cmd','T']],
+ ]},
+ {name:'Livello 5 · Combinazioni a tre tasti', color:'#FF7A4D', items:[
+   ['Nuova cartella',['Shift','Cmd','N']],
+   ['Salva con nome…',['Shift','Cmd','S']],
+   ['Svuota il Cestino',['Shift','Cmd','Del']],
+   ['Schermo intero',['Ctrl','Cmd','F']],
+   ['Screenshot schermo intero',['Shift','Cmd','3']],
+   ['Screenshot area selezionata',['Shift','Cmd','4']],
+ ]},
+ {name:'Livello 6 · Da esperti', color:'#E08A1E', items:[
+   ['Blocca lo schermo',['Ctrl','Cmd','Q']],
+   ['Uscita forzata app',['Opt','Cmd','Esc']],
+   ['Barra Screenshot',['Shift','Cmd','5']],
+   ['Riduci tutte le finestre',['Opt','Cmd','M']],
+   ['Affianca a sinistra',['Ctrl','Opt','Left']],
+   ['Affianca a destra',['Ctrl','Opt','Right']],
+ ]},
+];
+const gameLevels = curriculum
+  .map(l=>({name:l.name, color:l.color, items:l.items.filter(c=>isPlayable(c[1]))}))
+  .filter(l=>l.items.length>=3);
 
 let gLevel=0, gIndex=0, gScore=0, gStreak=0, gInput=[], gQueue=[], locked=false;
 
