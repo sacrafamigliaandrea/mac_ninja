@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iPad Ninja · I gesti dell'iPad</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236C4CE6'/%3E%3Crect x='18' y='10' width='28' height='44' rx='5' fill='%23fff'/%3E%3Crect x='22' y='16' width='20' height='30' rx='2' fill='%236C4CE6'/%3E%3Ccircle cx='32' cy='50' r='1.6' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236C4CE6'/%3E%3Crect x='18' y='10' width='28' height='44' rx='5' fill='%23fff'/%3E%3Crect x='22' y='16' width='20' height='30' rx='2' fill='%236C4CE6'/%3E%3Ccircle cx='32' cy='50' r='1.6' fill='%23fff'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   iPAD NINJA — palette dedicata "Aurora" (viola + corallo),
+   coerente con Mac Ninja.
+   ============================================================ */
+:root{
+  --cream:#F6F3FC; --warm:#EDE7F8; --card:#FFFFFF;
+  --brand:#6C4CE6; --brand2:#8A6BF2; --brandD:#3B2A80; --brandL:rgba(108,76,230,.09);
+  --accent:#FF7A4D; --accent2:#FF9A6E; --accentL:rgba(255,122,77,.12);
+  --gold:#F2A81E; --goldL:rgba(242,168,30,.14);
+  --ok:#12B5A6; --okL:rgba(18,181,166,.14);
+  --warn:#E08A1E; --warnL:rgba(224,138,30,.14);
+  --ink:#241B33; --muted:#6B6280; --light:#A79FB8;
+  --brd:#E4DCF3; --brd2:#CDC0EC;
+  --shadow:0 6px 26px rgba(60,40,120,.10);
+  --shadowS:0 2px 10px rgba(60,40,120,.07);
+  --body:'Atkinson Hyperlegible',Helvetica,Arial,sans-serif;
+  --head:'Lexend',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --maxw:1440px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:var(--body); color:var(--ink); font-size:18px; line-height:1.55;
+  background:
+    radial-gradient(1200px 700px at 15% -10%, rgba(108,76,230,.12), transparent 60%),
+    radial-gradient(1000px 600px at 110% 10%, rgba(255,122,77,.10), transparent 55%),
+    var(--cream);
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--head); margin:0; letter-spacing:-.01em}
+button{font-family:var(--head); cursor:pointer}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:22px clamp(16px,3vw,40px) 60px}
+
+.screen{display:none; animation:fade .35s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+/* ---- topbar ---- */
+.topbar{display:flex; align-items:center; gap:16px; margin-bottom:26px; flex-wrap:wrap}
+.logo{display:flex; align-items:center; gap:12px; cursor:pointer}
+.logo .mark{width:46px; height:46px; border-radius:13px; background:linear-gradient(135deg,var(--brand),var(--brand2));
+  display:grid; place-items:center; box-shadow:0 6px 16px rgba(108,76,230,.35); flex:none}
+.logo .mark svg{width:26px; height:26px; color:#fff}
+.logo b{font-family:var(--head); font-weight:800; font-size:1.5rem; line-height:1; display:block}
+.logo span{font-size:.82rem; color:var(--muted); display:block; margin-top:2px}
+.spacer{flex:1}
+.tnav{display:flex; gap:8px; flex-wrap:wrap}
+.tnav button{border:1.5px solid var(--brd2); background:var(--card); color:var(--ink); font-weight:600;
+  padding:10px 18px; border-radius:12px; font-size:.98rem; display:flex; align-items:center; gap:8px; transition:.15s}
+.tnav button svg{width:18px; height:18px}
+.tnav button:hover{border-color:var(--brand); color:var(--brand)}
+.tnav button.on{background:var(--brand); border-color:var(--brand); color:#fff; box-shadow:0 6px 16px rgba(108,76,230,.28)}
+
+/* ============================================================ HOME */
+.hero{background:linear-gradient(135deg,#2A1E52,#3B2A80 55%,#5B3F9E);
+  border-radius:26px; padding:clamp(28px,5vw,60px); color:#fff; position:relative; overflow:hidden;
+  box-shadow:0 24px 60px rgba(59,42,128,.30)}
+.hero::after{content:""; position:absolute; right:-80px; top:-80px; width:340px; height:340px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,122,77,.55), transparent 65%); filter:blur(4px)}
+.hero .eyebrow{display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.14);
+  padding:7px 14px; border-radius:999px; font-family:var(--head); font-weight:600; font-size:.82rem; letter-spacing:.04em}
+.hero .eyebrow svg{width:16px; height:16px}
+.hero h1{font-size:clamp(2.4rem,6vw,4.4rem); font-weight:800; line-height:1.02; margin:20px 0 10px; position:relative}
+.hero h1 em{font-style:normal; color:var(--accent2)}
+.hero p{font-size:clamp(1.05rem,2vw,1.35rem); max-width:640px; color:#E9E3FA; margin:0 0 30px; position:relative}
+.hero-cta{display:flex; gap:14px; flex-wrap:wrap; position:relative}
+.big{border:none; border-radius:16px; padding:18px 30px; font-size:1.15rem; font-weight:700; display:flex; align-items:center; gap:12px; transition:.18s}
+.big svg{width:24px; height:24px}
+.big.primary{background:var(--accent); color:#fff; box-shadow:0 10px 26px rgba(255,122,77,.40)}
+.big.primary:hover{transform:translateY(-3px)}
+.big.on-dark{background:rgba(255,255,255,.12); color:#fff; border:1.5px solid rgba(255,255,255,.30)}
+.big.on-dark:hover{background:rgba(255,255,255,.20)}
+.home-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:26px}
+.hcard{background:var(--card); border:1px solid var(--brd); border-radius:18px; padding:22px; box-shadow:var(--shadowS)}
+.hcard .ic{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; margin-bottom:12px}
+.hcard .ic svg{width:24px; height:24px; color:#fff}
+.hcard h3{font-size:1.12rem; margin-bottom:6px}
+.hcard p{margin:0; color:var(--muted); font-size:.96rem}
+.stat-row{display:flex; gap:26px; margin-top:26px; flex-wrap:wrap}
+.stat b{font-family:var(--head); font-weight:800; font-size:2rem; color:var(--brand); display:block; line-height:1}
+.stat span{color:var(--muted); font-size:.9rem}
+
+/* ============================================================ STUDIA */
+.study-head{margin-bottom:22px}
+.study-head h2{font-size:1.9rem; margin-bottom:6px}
+.study-head p{color:var(--muted); margin:0}
+.cat{margin-bottom:30px}
+.cat-title{display:flex; align-items:center; gap:12px; margin-bottom:14px}
+.cat-title .cdot{width:36px; height:36px; border-radius:10px; display:grid; place-items:center; flex:none}
+.cat-title .cdot svg{width:20px; height:20px; color:#fff}
+.cat-title h3{font-size:1.25rem}
+.g-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px}
+.gcard{background:var(--card); border:1px solid var(--brd); border-radius:16px; padding:16px 18px; box-shadow:var(--shadowS);
+  display:flex; gap:14px; align-items:flex-start}
+.gcard .arw{width:42px; height:42px; border-radius:12px; flex:none; display:grid; place-items:center; background:var(--warm)}
+.gcard .arw svg{width:24px; height:24px; color:var(--brand)}
+.gcard b{font-family:var(--head); font-weight:700; font-size:1.02rem; display:block; margin-bottom:2px}
+.gcard span{color:var(--muted); font-size:.92rem; line-height:1.4}
+.note-card{background:var(--accentL); border:1px solid rgba(255,122,77,.3); border-radius:16px; padding:16px 20px; margin-top:6px}
+.note-card b{font-family:var(--head)}
+.note-card p{margin:6px 0 0; color:var(--muted); font-size:.95rem}
+
+/* ============================================================ SFIDA / GIOCO */
+.game-stage{display:flex; flex-direction:column; align-items:center; gap:18px}
+.hud{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center}
+.hud .chip{background:var(--card); border:1.5px solid var(--brd); border-radius:999px; padding:7px 16px;
+  font-family:var(--head); font-weight:700; font-size:.9rem; display:flex; gap:7px; align-items:center}
+.hud .chip small{color:var(--muted); font-weight:600; font-size:.78rem}
+.hud .chip.lvl{border-color:var(--brand2); color:var(--brand)}
+.progwrap{width:min(520px,90vw); height:8px; background:var(--warm); border-radius:99px; overflow:hidden}
+.progbar{height:100%; width:0; background:linear-gradient(90deg,var(--brand),var(--accent)); transition:width .4s}
+
+/* iPad */
+.ipad{position:relative; width:min(360px,80vw); margin:0 auto; user-select:none; -webkit-user-select:none; touch-action:none}
+.ipad-svg{width:100%; display:block; filter:drop-shadow(0 24px 40px rgba(59,42,128,.28))}
+.ipad-screen{position:absolute; left:7.33%; top:4.25%; width:85.33%; height:91.5%;
+  border-radius:5% / 3.6%; overflow:hidden; background:linear-gradient(160deg,#3a2c6b,#241b45 60%,#4a2f6e);
+  container-type:size; container-name:pad;}
+.ipad-screen .wallglow{position:absolute; inset:0;
+  background:radial-gradient(120% 80% at 80% 0%, rgba(255,122,77,.28), transparent 55%),
+             radial-gradient(120% 80% at 10% 100%, rgba(138,107,242,.35), transparent 55%);}
+.statusbar{position:absolute; top:0; left:0; right:0; height:6.5cqh; display:flex; align-items:center; justify-content:space-between;
+  padding:0 5cqw; color:#fff; font-family:var(--head); font-weight:600; font-size:min(3.2cqw,2.4cqh); z-index:2; pointer-events:none}
+.statusbar .sbr{display:flex; align-items:center; gap:1.4cqw}
+.statusbar svg{width:min(3.6cqw,3cqh); height:min(3.6cqw,3cqh); color:#fff}
+.consegna{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:8cqh 7cqw; z-index:1; pointer-events:none}
+.consegna .ask{color:rgba(255,255,255,.62); font-family:var(--head); font-weight:500; font-size:min(4cqw,4.6cqh); margin-bottom:1.6cqh}
+.consegna .q{color:#fff; font-family:var(--head); font-weight:800; font-size:min(8.4cqw,11cqh); line-height:1.1}
+.consegna .how{color:rgba(255,255,255,.72); font-size:min(3.9cqw,4.6cqh); margin-top:2.4cqh; max-width:80%}
+.consegna .miniarw{margin-top:2.4cqh}
+.consegna .miniarw svg{width:min(11cqw,9cqh); height:min(11cqw,9cqh); color:rgba(255,255,255,.5)}
+.consegna.correct .q{color:#3BE8C8}
+.consegna.wrong .q{color:#FFC46B; animation:shake .4s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.txtblock{position:absolute; left:9cqw; right:9cqw; top:30cqh; z-index:1; pointer-events:none;
+  color:rgba(255,255,255,.9); font-size:min(4cqw,4.6cqh); line-height:1.6; text-align:left;
+  background:rgba(255,255,255,.08); border-radius:3cqw; padding:4cqh 5cqw; display:none}
+/* home indicator */
+.home-ind{position:absolute; bottom:1.4cqh; left:50%; transform:translateX(-50%); width:34cqw; height:.9cqh;
+  border-radius:99px; background:rgba(255,255,255,.55); z-index:3; pointer-events:none}
+/* dim overlay for brightness */
+.screen-dim{position:absolute; inset:0; background:#000; opacity:0; z-index:4; pointer-events:none; transition:opacity .12s}
+/* flash feedback */
+.ipad-screen.flash-ok{box-shadow:inset 0 0 0 .8cqw rgba(18,181,166,.9), inset 0 0 12cqw rgba(18,181,166,.35)}
+.ipad-screen.flash-warn{box-shadow:inset 0 0 0 .8cqw rgba(224,138,30,.9), inset 0 0 12cqw rgba(224,138,30,.35)}
+/* gesture pad */
+.gpad{position:absolute; inset:0; z-index:5; cursor:grab}
+.gpad:active{cursor:grabbing}
+/* live gesture trail */
+.trail{position:absolute; width:5cqw; height:5cqw; margin:-2.5cqw 0 0 -2.5cqw; border-radius:50%;
+  background:rgba(255,255,255,.28); border:.4cqw solid rgba(255,255,255,.7); z-index:6; pointer-events:none; display:none}
+
+/* Control Center */
+.cc{position:absolute; inset:0; z-index:7; display:none; padding:5cqh 5cqw;
+  background:rgba(30,22,54,.34); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  grid-template-columns:1fr 1fr; grid-auto-rows:min-content; gap:3cqw; align-content:start}
+.cc.on{display:grid; animation:ccIn .28s ease}
+@keyframes ccIn{from{opacity:0; transform:translateY(-4cqh)} to{opacity:1; transform:none}}
+.cc .cctask{grid-column:span 2; text-align:center; color:#fff; font-family:var(--head); pointer-events:none; margin-bottom:1cqh}
+.cc .cctask .ask{color:rgba(255,255,255,.7); font-weight:500; font-size:min(3cqw,2.6cqh)}
+.cc .cctask .q{font-weight:800; font-size:min(5.4cqw,4.8cqh); line-height:1.15}
+.cc .cctask.correct .q{color:#3BE8C8}
+.cc .tile{background:rgba(255,255,255,.16); border-radius:4cqw; padding:3cqh 3cqw; color:#fff;
+  display:flex; align-items:center; gap:2.4cqw; font-family:var(--head); font-weight:600; font-size:min(3.4cqw,3cqh);
+  border:.4cqw solid transparent; transition:.15s; cursor:pointer}
+.cc .tile svg{width:min(6cqw,5cqh); height:min(6cqw,5cqh); flex:none}
+.cc .tile.on{background:var(--brand); border-color:rgba(255,255,255,.4)}
+.cc .tile.torch.on{background:var(--gold)}
+.cc .slider{grid-column:span 1; background:rgba(255,255,255,.16); border-radius:4cqw; height:34cqh; position:relative;
+  overflow:hidden; cursor:ns-resize}
+.cc .slider .fill{position:absolute; left:0; right:0; bottom:0; background:rgba(255,255,255,.9)}
+.cc .slider .ico{position:absolute; bottom:2.4cqh; left:50%; transform:translateX(-50%); z-index:2}
+.cc .slider .ico svg{width:min(6cqw,5cqh); height:min(6cqw,5cqh); color:#3a2c6b}
+.cc .slider .lab{position:absolute; top:2.2cqh; left:0; right:0; text-align:center; color:rgba(255,255,255,.85);
+  font-family:var(--head); font-weight:600; font-size:min(2.8cqw,2.4cqh); z-index:2}
+
+/* app switcher / split hints (visual only) */
+.appcards{position:absolute; inset:0; z-index:2; display:none; align-items:center; justify-content:center; gap:4cqw; pointer-events:none}
+.appcards .ac{width:26cqw; height:34cqh; border-radius:3cqw; background:rgba(255,255,255,.85); box-shadow:0 4cqw 8cqw rgba(0,0,0,.3)}
+
+/* buttons under ipad */
+.gbtns{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+.gbtn{border:1.5px solid var(--brd2); background:var(--card); color:var(--ink); font-weight:600; font-size:.95rem;
+  padding:10px 18px; border-radius:12px; display:flex; align-items:center; gap:8px; transition:.15s}
+.gbtn svg{width:18px; height:18px}
+.gbtn:hover{border-color:var(--brand); color:var(--brand)}
+
+/* overlay end */
+.overlay{position:fixed; inset:0; background:rgba(36,27,51,.55); display:none; align-items:center; justify-content:center; z-index:50; padding:20px}
+.overlay.on{display:flex; animation:fade .3s}
+.modal{background:var(--card); border-radius:22px; padding:34px; max-width:440px; width:100%; text-align:center; box-shadow:0 30px 70px rgba(59,42,128,.4)}
+.modal h2{font-size:1.7rem; margin-bottom:6px}
+.modal .rank{font-family:var(--head); font-weight:800; color:var(--accent); font-size:1.2rem; margin:10px 0}
+.modal .big-score{font-family:var(--mono); font-size:3rem; font-weight:700; color:var(--brand)}
+.modal .mbtns{display:flex; gap:10px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.mbtn{border:none; border-radius:12px; padding:12px 22px; font-weight:700; font-size:1rem}
+.mbtn.p{background:var(--brand); color:#fff}
+.mbtn.s{background:var(--warm); color:var(--ink)}
+
+/* docenti */
+.doc-wrap{max-width:760px}
+.doc-wrap h2{font-size:1.9rem; margin-bottom:14px}
+.doc-card{background:var(--card); border:1px solid var(--brd); border-radius:18px; padding:24px 26px; box-shadow:var(--shadowS); margin-bottom:16px}
+.doc-card h3{font-size:1.2rem; margin-bottom:8px; display:flex; align-items:center; gap:10px}
+.doc-card h3 svg{width:22px; height:22px; color:var(--brand)}
+.doc-card p{margin:0 0 8px; color:var(--muted)}
+.doc-card ul{margin:8px 0 0; padding-left:20px; color:var(--muted)}
+.doc-card li{margin-bottom:5px}
+
+@media(max-width:640px){
+  .consegna .q{font-size:9cqw}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo" onclick="go('home')">
+      <div class="mark" id="logoMark"></div>
+      <div><b>iPad Ninja</b><span>I gesti dell'iPad, passo dopo passo</span></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="tnav" id="tnav">
+      <button data-nav="home" onclick="go('home')"><span id="navHome"></span>Home</button>
+      <button data-nav="study" onclick="go('study')"><span id="navStudy"></span>Studia</button>
+      <button data-nav="game" onclick="go('game')"><span id="navGame"></span>Sfida</button>
+      <button data-nav="doc" onclick="go('doc')"><span id="navDoc"></span>Docenti</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <section class="screen active" id="s-home">
+    <div class="hero">
+      <span class="eyebrow" id="heroEye"></span>
+      <h1>Impara i <em>gesti</em><br>dell'iPad giocando</h1>
+      <p>Scorri, tocca e trascina sull'iPad virtuale per imparare a muoverti in iPadOS: dalla Home al Centro di Controllo, dal cambio app al multitasking.</p>
+      <div class="hero-cta">
+        <button class="big primary" id="heroGame" onclick="go('game')"></button>
+        <button class="big on-dark" onclick="go('study')">Studia i gesti</button>
+      </div>
+    </div>
+    <div class="home-grid">
+      <div class="hcard"><div class="ic" style="background:linear-gradient(135deg,#6C4CE6,#8A6BF2)" id="hcIc1"></div><h3>Gesti veri</h3><p>Esegui davvero lo swipe o il tap con il mouse: l'app riconosce direzione, zona e pausa.</p></div>
+      <div class="hcard"><div class="ic" style="background:linear-gradient(135deg,#12B5A6,#3BE8C8)" id="hcIc2"></div><h3>A livelli</h3><p>Si parte dai gesti di ogni giorno e si sale fino al multitasking da esperti.</p></div>
+      <div class="hcard"><div class="ic" style="background:linear-gradient(135deg,#FF7A4D,#FF9A6E)" id="hcIc3"></div><h3>Centro di Controllo</h3><p>Regola luminosità e volume, accendi Wi-Fi, Bluetooth e torcia con gesti reali.</p></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><b id="stLevels">–</b><span>livelli</span></div>
+      <div class="stat"><b id="stGestures">–</b><span>gesti da imparare</span></div>
+      <div class="stat"><b>0</b><span>emoji · solo icone</span></div>
+    </div>
+  </section>
+
+  <!-- STUDIA -->
+  <section class="screen" id="s-study">
+    <div class="study-head">
+      <h2>Studia i gesti</h2>
+      <p>Ogni gesto con la sua istruzione. Poi mettiti alla prova nella Sfida.</p>
+    </div>
+    <div id="studyList"></div>
+  </section>
+
+  <!-- SFIDA -->
+  <section class="screen" id="s-game">
+    <div class="game-stage">
+      <div class="hud">
+        <div class="chip lvl"><span id="hudLevelName">Livello 1</span> <small id="hudLevel">1/5</small></div>
+        <div class="chip"><small>Serie</small><span id="hudStreak">0</span></div>
+        <div class="chip"><small>Punti</small><span id="hudScore">0</span></div>
+      </div>
+      <div class="progwrap"><div class="progbar" id="progBar"></div></div>
+
+      <div class="ipad">
+        <svg class="ipad-svg" viewBox="0 0 600 800" role="img" aria-label="iPad con la consegna sullo schermo">
+          <rect x="18" y="10" width="564" height="780" rx="46" fill="#2b2640"/>
+          <rect x="18" y="10" width="564" height="780" rx="46" fill="none" stroke="#4a4566" stroke-width="2"/>
+          <rect x="26" y="18" width="548" height="764" rx="40" fill="#111018"/>
+          <circle cx="300" cy="24" r="3.4" fill="#3b3a52"/>
+        </svg>
+        <div class="ipad-screen" id="ipadScreen">
+          <div class="wallglow"></div>
+          <div class="screen-dim" id="screenDim"></div>
+          <div class="statusbar">
+            <span id="clock">9:41</span>
+            <span class="sbr" id="sbRight"></span>
+          </div>
+          <div class="appcards" id="appCards"><div class="ac"></div><div class="ac"></div></div>
+          <div class="txtblock" id="txtBlock">Trascina qui il testo. Ogni cosa che scrivi sull'iPad puoi selezionarla, spostarla e sistemarla con le dita.</div>
+          <div class="consegna" id="consegna">
+            <div class="ask">Esegui questo gesto</div>
+            <div class="q" id="qText">Pronti?</div>
+            <div class="how" id="qHow"></div>
+            <div class="miniarw" id="qArrow"></div>
+          </div>
+          <div class="cc" id="cc"></div>
+          <div class="home-ind"></div>
+          <div class="trail" id="trail"></div>
+          <div class="gpad" id="gpad"></div>
+        </div>
+      </div>
+
+      <div class="gbtns">
+        <button class="gbtn" onclick="showHint()"><span id="btnHint"></span>Mostra indizio</button>
+        <button class="gbtn" onclick="skipItem()"><span id="btnSkip"></span>Salta</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOCENTI -->
+  <section class="screen" id="s-doc">
+    <div class="doc-wrap">
+      <h2>Per i docenti</h2>
+      <div class="doc-card">
+        <h3><span id="docIc1"></span>Come funziona</h3>
+        <p>L'app riproduce un iPad virtuale su cui lo studente esegue i gesti con il mouse (o il dito su un touch screen). Il riconoscitore valuta il gesto reale: zona di partenza, direzione, distanza ed eventuale pausa. Nessuna scritta è un'emoji: tutte le icone sono SVG.</p>
+      </div>
+      <div class="doc-card">
+        <h3><span id="docIc2"></span>Percorso graduale</h3>
+        <p>Cinque livelli di difficoltà crescente:</p>
+        <ul>
+          <li><b>Muoversi</b> — Home, Centro di Controllo, Notifiche, Spotlight.</li>
+          <li><b>Centro di Controllo</b> — luminosità, volume, Wi-Fi, Bluetooth, torcia, blocco rotazione.</li>
+          <li><b>Cambiare app</b> — app successiva/precedente, Dock, selettore app.</li>
+          <li><b>Multitasking</b> — Split View, Slide Over.</li>
+          <li><b>Testo</b> — selezione con doppio/triplo tap e pressione prolungata.</li>
+        </ul>
+      </div>
+      <div class="doc-card">
+        <h3><span id="docIc3"></span>Un limite onesto</h3>
+        <p>Alcuni gesti dell'iPad usano <b>tre dita</b> (copia = pizzico a tre dita, incolla = apertura a tre dita, annulla = scorri a sinistra con tre dita). Con il mouse non sono riproducibili: li trovi spiegati nella sezione Studia, ma non nella Sfida. Servono un iPad reale e più dita.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FINE GIOCO -->
+<div class="overlay" id="endOverlay">
+  <div class="modal">
+    <h2>Sfida completata</h2>
+    <div class="rank" id="endRank">Apprendista</div>
+    <div class="big-score" id="endScore">0</div>
+    <div class="mbtns">
+      <button class="mbtn p" onclick="startGame()">Rigioca</button>
+      <button class="mbtn s" onclick="closeEnd();go('study')">Ripassa</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================ ICONE (SVG inline) */
+const ICON = {
+  ipad:'<rect x="5" y="2" width="14" height="20" rx="2.5"/><line x1="12" y1="18.5" x2="12" y2="18.5"/>',
+  home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+  search:'<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>',
+  bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+  control:'<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>',
+  wifi:'<path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/>',
+  bt:'<path d="M7 7l10 10-5 4V3l5 4L7 17"/>',
+  torch:'<path d="M9 2h6l-1 6 1 3-3 11-3-11 1-3-1-6z"/><line x1="10" y1="6" x2="14" y2="6"/>',
+  rotate:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  volume:'<path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8a5 5 0 0 1 0 8"/>',
+  layers:'<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>',
+  text:'<path d="M5 5h14"/><path d="M12 5v14"/><path d="M8 19h8"/>',
+  book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M19 3v18"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5a3.5 3.5 0 0 1 0 7"/><path d="M22 20a6.5 6.5 0 0 0-4-6"/>',
+  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/>',
+  play:'<polygon points="6 4 20 12 6 20 6 4"/>',
+  hint:'<path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 4 10.5c-.6.6-1 1.3-1 2.5H9c0-1.2-.4-1.9-1-2.5A6 6 0 0 1 12 3z"/>',
+  skip:'<polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/>',
+  battery:'<rect x="2" y="7" width="17" height="10" rx="2"/><rect x="4" y="9" width="11" height="6" rx="1" fill="currentColor" stroke="none"/><line x1="21" y1="10" x2="21" y2="14"/>',
+  arrowUp:'<line x1="12" y1="20" x2="12" y2="5"/><polyline points="6 11 12 5 18 11"/>',
+  arrowDown:'<line x1="12" y1="4" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/>',
+  arrowLeft:'<line x1="20" y1="12" x2="5" y2="12"/><polyline points="11 6 5 12 11 18"/>',
+  arrowRight:'<line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/>',
+  tap:'<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/>',
+  hold:'<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/>',
+  drag:'<path d="M6 6l12 12"/><polyline points="6 12 6 6 12 6"/><polyline points="18 12 18 18 12 18"/>',
+  cornerDR:'<path d="M6 6h9v9"/><polyline points="9 15 15 15 15 9" transform="translate(0 0)"/><line x1="6" y1="6" x2="15" y2="15"/>'
+};
+function svg(body,cls){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'+(cls?' class="'+cls+'"':'')+'>'+body+'</svg>'; }
+function ic(name){ return svg(ICON[name]||''); }
+const ARROW_ICON={up:'arrowUp',down:'arrowDown',left:'arrowLeft',right:'arrowRight',tap:'tap',hold:'hold',drag:'drag'};
+
+/* ============================================================ DATI: livelli graduali */
+/* Ogni item: label, how (istruzione), arrow (icona indizio), cat (categoria studio),
+   match(ctx) -> true se il gesto è corretto. Campi opzionali: needsCC, opensCC, showText. */
+const swipeFrom=(dir,from)=>c=>c.type==='swipe'&&c.dir===dir&&(Array.isArray(from)?from.includes(c.from):c.from===from);
+
+const levels=[
+ {name:'Livello 1 · Muoversi', color:'#12B5A6', cat:'Navigazione', items:[
+   {label:'Torna alla Home', how:'Scorri in alto dal bordo inferiore', arrow:'up',
+     match:c=>c.type==='swipe'&&c.dir==='up'&&c.from==='bottom'&&c.dwell<160},
+   {label:'Apri il Centro di Controllo', how:'Scorri in basso dall’angolo in alto a destra', arrow:'down', opensCC:true,
+     match:swipeFrom('down','top-right')},
+   {label:'Apri le Notifiche', how:'Scorri in basso dall’alto a sinistra', arrow:'down',
+     match:swipeFrom('down',['top-left','top-center'])},
+   {label:'Cerca con Spotlight', how:'Scorri in basso dal centro dello schermo', arrow:'down',
+     match:swipeFrom('down','center')},
+ ]},
+ {name:'Livello 2 · Centro di Controllo', color:'#6C4CE6', cat:'Centro di Controllo', needsCC:true, items:[
+   {label:'Alza la luminosità', how:'Trascina in alto il cursore luminosità', arrow:'up',
+     match:c=>c.action==='brightness'&&c.delta>0},
+   {label:'Abbassa il volume', how:'Trascina in basso il cursore volume', arrow:'down',
+     match:c=>c.action==='volume'&&c.delta<0},
+   {label:'Attiva/disattiva il Wi-Fi', how:'Tocca il riquadro Wi-Fi', arrow:'tap',
+     match:c=>c.action==='wifi'},
+   {label:'Attiva/disattiva il Bluetooth', how:'Tocca il riquadro Bluetooth', arrow:'tap',
+     match:c=>c.action==='bt'},
+   {label:'Accendi la torcia', how:'Tocca il riquadro Torcia', arrow:'tap',
+     match:c=>c.action==='torch'},
+   {label:'Blocca la rotazione', how:'Tocca il riquadro Blocco rotazione', arrow:'tap',
+     match:c=>c.action==='rotate'},
+ ]},
+ {name:'Livello 3 · Cambiare app', color:'#9A3FD1', cat:'Navigazione', items:[
+   {label:'Passa all’app successiva', how:'Scorri a sinistra sulla barra inferiore', arrow:'left',
+     match:c=>c.type==='swipe'&&c.from==='bottom'&&c.dir==='left'},
+   {label:'Passa all’app precedente', how:'Scorri a destra sulla barra inferiore', arrow:'right',
+     match:c=>c.type==='swipe'&&c.from==='bottom'&&c.dir==='right'},
+   {label:'Mostra il Dock', how:'Scorri poco in alto dal bordo inferiore', arrow:'up',
+     match:c=>c.type==='swipe'&&c.dir==='up'&&c.from==='bottom'&&c.dist<0.2&&c.dwell<160},
+   {label:'Apri il selettore app', how:'Scorri in alto dal fondo e fai una pausa', arrow:'up', showCards:true,
+     match:c=>c.type==='swipe'&&c.dir==='up'&&c.from==='bottom'&&c.dist>=0.26&&c.dwell>=170},
+ ]},
+ {name:'Livello 4 · Multitasking', color:'#FF7A4D', cat:'Multitasking', items:[
+   {label:'Affianca un’app a destra (Split View)', how:'Trascina dal fondo verso il bordo destro', arrow:'drag',
+     match:c=>c.type==='swipe'&&c.from==='bottom'&&c.to&&c.to.x>0.78&&c.to.y<0.72},
+   {label:'Affianca un’app a sinistra (Split View)', how:'Trascina dal fondo verso il bordo sinistro', arrow:'drag',
+     match:c=>c.type==='swipe'&&c.from==='bottom'&&c.to&&c.to.x<0.22&&c.to.y<0.72},
+   {label:'Apri un’app in Slide Over', how:'Trascina dentro dal bordo destro', arrow:'left',
+     match:c=>c.type==='swipe'&&c.from==='right-edge'&&c.dir==='left'},
+ ]},
+ {name:'Livello 5 · Testo', color:'#E08A1E', cat:'Testo', showText:true, items:[
+   {label:'Seleziona una parola', how:'Tocca due volte il testo (doppio tap)', arrow:'tap',
+     match:c=>c.type==='tap'&&c.count===2},
+   {label:'Seleziona il paragrafo', how:'Tocca tre volte il testo (triplo tap)', arrow:'tap',
+     match:c=>c.type==='tap'&&c.count===3},
+   {label:'Mostra le opzioni', how:'Tieni premuto sul testo', arrow:'hold',
+     match:c=>c.type==='longpress'},
+ ]},
+];
+
+/* gesti solo-studio (tre dita, non riproducibili col mouse) */
+const threeFingers=[
+  {label:'Copia', how:'Pizzica con tre dita (chiudi)', arrow:'tap'},
+  {label:'Incolla', how:'Apri tre dita (allarga)', arrow:'tap'},
+  {label:'Annulla', how:'Scorri a sinistra con tre dita', arrow:'left'},
+  {label:'Ripristina', how:'Scorri a destra con tre dita', arrow:'right'},
+];
+
+/* ============================================================ NAV */
+function go(screen){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+screen).classList.add('active');
+  document.querySelectorAll('#tnav button[data-nav]').forEach(b=>b.classList.toggle('on', b.dataset.nav===screen));
+  if(screen==='game') startGame();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================ HOME + STATIC */
+function initStatic(){
+  document.getElementById('logoMark').innerHTML=ic('ipad');
+  document.getElementById('navHome').innerHTML='';
+  document.getElementById('navStudy').innerHTML=ic('book');
+  document.getElementById('navGame').innerHTML=ic('target');
+  document.getElementById('navDoc').innerHTML=ic('users');
+  document.getElementById('heroEye').innerHTML=ic('spark')+'<span>Laboratorio Apple · scuola</span>';
+  document.getElementById('heroGame').innerHTML=ic('play')+'<span>Vai alla sfida</span>';
+  document.getElementById('hcIc1').innerHTML=ic('drag');
+  document.getElementById('hcIc2').innerHTML=ic('layers');
+  document.getElementById('hcIc3').innerHTML=ic('control');
+  document.getElementById('btnHint').innerHTML=ic('hint');
+  document.getElementById('btnSkip').innerHTML=ic('skip');
+  document.getElementById('docIc1').innerHTML=ic('target');
+  document.getElementById('docIc2').innerHTML=ic('layers');
+  document.getElementById('docIc3').innerHTML=ic('text');
+  document.getElementById('sbRight').innerHTML=ic('wifi')+ic('battery');
+  const totG=levels.reduce((a,l)=>a+l.items.length,0);
+  document.getElementById('stLevels').textContent=levels.length;
+  document.getElementById('stGestures').textContent=totG;
+  buildStudy();
+}
+
+const CAT_ICON={'Navigazione':'home','Centro di Controllo':'control','Multitasking':'layers','Testo':'text'};
+const CAT_COLOR={'Navigazione':'#12B5A6','Centro di Controllo':'#6C4CE6','Multitasking':'#FF7A4D','Testo':'#E08A1E'};
+function gcard(it){
+  return '<div class="gcard"><div class="arw">'+ic(ARROW_ICON[it.arrow]||'tap')+'</div>'+
+    '<div><b>'+it.label+'</b><span>'+it.how+'</span></div></div>';
+}
+function buildStudy(){
+  const cats={};
+  levels.forEach(l=>l.items.forEach(it=>{ (cats[l.cat]=cats[l.cat]||[]).push(it); }));
+  let html='';
+  Object.keys(cats).forEach(cat=>{
+    html+='<div class="cat"><div class="cat-title"><div class="cdot" style="background:'+(CAT_COLOR[cat]||'#6C4CE6')+'">'+
+      ic(CAT_ICON[cat]||'control')+'</div><h3>'+cat+'</h3></div><div class="g-grid">';
+    html+=cats[cat].map(gcard).join('');
+    html+='</div></div>';
+  });
+  // tre dita
+  html+='<div class="cat"><div class="cat-title"><div class="cdot" style="background:#8A6BF2">'+ic('text')+
+    '</div><h3>Testo a tre dita</h3></div><div class="g-grid">'+threeFingers.map(gcard).join('')+'</div>'+
+    '<div class="note-card"><b>Solo su iPad reale</b><p>Questi gesti usano tre dita insieme: non si possono provare con il mouse, per questo non compaiono nella Sfida.</p></div></div>';
+  document.getElementById('studyList').innerHTML=html;
+}
+
+/* ============================================================ CONTROL CENTER */
+let ccState={wifi:true,bt:true,torch:false,rotate:false,brightness:.72,volume:.6};
+function buildCC(){
+  const cc=document.getElementById('cc');
+  cc.innerHTML=
+    '<div class="cctask" id="ccTask"></div>'+
+    tileHTML('wifi','wifi','Wi-Fi')+
+    tileHTML('bt','bt','Bluetooth')+
+    tileHTML('torch','torch','Torcia')+
+    tileHTML('rotate','rotate','Rotazione')+
+    sliderHTML('brightness','sun','Luminosità')+
+    sliderHTML('volume','volume','Volume');
+  cc.querySelectorAll('.tile').forEach(t=>{
+    t.addEventListener('pointerup',e=>{ e.stopPropagation();
+      const k=t.dataset.k; ccState[k]=!ccState[k]; t.classList.toggle('on',ccState[k]);
+      submit({action:k,value:ccState[k],deliberate:true});
+    });
+  });
+  cc.querySelectorAll('.slider').forEach(s=>attachSlider(s));
+  refreshCC();
+}
+function tileHTML(k,icn,lab){ return '<div class="tile'+(k==='torch'?' torch':'')+'" data-k="'+k+'">'+ic(icn)+lab+'</div>'; }
+function sliderHTML(k,icn,lab){
+  return '<div class="slider" data-k="'+k+'"><div class="fill"></div><div class="lab">'+lab+'</div><div class="ico">'+ic(icn)+'</div></div>';
+}
+function refreshCC(){
+  const cc=document.getElementById('cc');
+  cc.querySelectorAll('.tile').forEach(t=>t.classList.toggle('on',ccState[t.dataset.k]));
+  cc.querySelector('.slider[data-k=brightness] .fill').style.height=(ccState.brightness*100)+'%';
+  cc.querySelector('.slider[data-k=volume] .fill').style.height=(ccState.volume*100)+'%';
+  applyBrightness();
+}
+function applyBrightness(){
+  document.getElementById('screenDim').style.opacity=(1-ccState.brightness)*0.72;
+}
+function attachSlider(s){
+  const k=s.dataset.k, fill=s.querySelector('.fill');
+  let dragging=false, startVal=0;
+  const setFromY=(clientY)=>{
+    const r=s.getBoundingClientRect();
+    let v=1-(clientY-r.top)/r.height; v=Math.max(0,Math.min(1,v));
+    ccState[k]=v; fill.style.height=(v*100)+'%'; if(k==='brightness') applyBrightness();
+  };
+  s.addEventListener('pointerdown',e=>{ e.stopPropagation(); dragging=true; startVal=ccState[k]; s.setPointerCapture(e.pointerId); setFromY(e.clientY); });
+  s.addEventListener('pointermove',e=>{ if(dragging) setFromY(e.clientY); });
+  s.addEventListener('pointerup',e=>{ if(!dragging)return; dragging=false;
+    const delta=ccState[k]-startVal;
+    submit({action:k,delta:delta,value:ccState[k],deliberate:true});
+  });
+}
+function openCC(){ document.getElementById('cc').classList.add('on'); }
+function closeCC(){ document.getElementById('cc').classList.remove('on'); }
+
+/* ============================================================ RICONOSCITORE GESTI */
+const gpad=document.getElementById('gpad');
+const trail=document.getElementById('trail');
+let gStart=null, gLast=null, gMoved=false, gLastMoveT=0, lpTimer=null, lpFired=false;
+let tapSeq={count:0, timer:null, x:0, y:0};
+const TAP=0.045, SWIPE=0.07;
+
+function norm(e){
+  const r=gpad.getBoundingClientRect();
+  return {x:(e.clientX-r.left)/r.width, y:(e.clientY-r.top)/r.height, t:performance.now()};
+}
+function zoneOf(p){
+  if(p.y<0.12){ return p.x>0.62?'top-right': p.x<0.38?'top-left':'top-center'; }
+  if(p.y>0.86) return 'bottom';
+  if(p.x>0.9) return 'right-edge';
+  if(p.x<0.1) return 'left-edge';
+  return 'center';
+}
+gpad.addEventListener('pointerdown',e=>{
+  if(locked) return;
+  gpad.setPointerCapture(e.pointerId);
+  gStart=norm(e); gLast=gStart; gMoved=false; gLastMoveT=gStart.t; lpFired=false;
+  showTrail(e);
+  clearTimeout(lpTimer);
+  lpTimer=setTimeout(()=>{ if(!gMoved){ lpFired=true; hideTrail(); submit({type:'longpress',x:gStart.x,y:gStart.y,deliberate:true}); } }, 520);
+});
+gpad.addEventListener('pointermove',e=>{
+  if(!gStart) return;
+  const p=norm(e); const d=Math.hypot(p.x-gLast.x,p.y-gLast.y);
+  if(Math.hypot(p.x-gStart.x,p.y-gStart.y)>TAP){ gMoved=true; }
+  if(d>0.006){ gLast=p; gLastMoveT=p.t; }
+  moveTrail(e);
+});
+gpad.addEventListener('pointerup',e=>{
+  clearTimeout(lpTimer);
+  hideTrail();
+  if(!gStart||lpFired){ gStart=null; return; }
+  const end=norm(e);
+  const dx=end.x-gStart.x, dy=end.y-gStart.y;
+  const dist=Math.hypot(dx,dy);
+  const dwell=end.t-gLastMoveT;
+  if(dist<TAP){ handleTap(gStart.x,gStart.y); gStart=null; return; }
+  if(dist<SWIPE){ gStart=null; return; } // troppo corto: ignora
+  const adx=Math.abs(dx), ady=Math.abs(dy);
+  const dir = ady>=adx ? (dy<0?'up':'down') : (dx<0?'left':'right');
+  submit({type:'swipe', dir, from:zoneOf(gStart), to:{x:end.x,y:end.y}, dist, dwell, deliberate:true});
+  gStart=null;
+});
+gpad.addEventListener('pointercancel',()=>{ clearTimeout(lpTimer); hideTrail(); gStart=null; });
+
+function handleTap(x,y){
+  clearTimeout(tapSeq.timer);
+  tapSeq.count++; tapSeq.x=x; tapSeq.y=y;
+  tapSeq.timer=setTimeout(()=>{
+    submit({type:'tap', count:tapSeq.count, x:tapSeq.x, y:tapSeq.y, deliberate:true});
+    tapSeq.count=0;
+  }, 320);
+}
+function showTrail(e){ const r=gpad.getBoundingClientRect(); trail.style.display='block'; trail.style.left=((e.clientX-r.left)/r.width*100)+'%'; trail.style.top=((e.clientY-r.top)/r.height*100)+'%'; }
+function moveTrail(e){ const r=gpad.getBoundingClientRect(); trail.style.left=((e.clientX-r.left)/r.width*100)+'%'; trail.style.top=((e.clientY-r.top)/r.height*100)+'%'; }
+function hideTrail(){ trail.style.display='none'; }
+
+/* ============================================================ MOTORE DI GIOCO */
+let gLevel=0, gIndex=0, gScore=0, gStreak=0, gQueue=[], locked=false;
+
+function startGame(){
+  gLevel=0; gScore=0; gStreak=0; closeEnd();
+  buildCC();
+  loadLevel(0);
+}
+function loadLevel(i){
+  if(i>=levels.length){ endGame(); return; }
+  gLevel=i;
+  gQueue=shuffle(levels[i].items.slice());
+  gIndex=0;
+  document.getElementById('hudLevelName').textContent=levels[i].name.split(' · ')[1]||levels[i].name;
+  document.getElementById('hudLevel').textContent=(i+1)+'/'+levels.length;
+  ask();
+}
+function ask(){
+  if(gIndex>=gQueue.length){ loadLevel(gLevel+1); return; }
+  locked=false;
+  const lvl=levels[gLevel], it=gQueue[gIndex];
+  const con=document.getElementById('consegna'); con.className='consegna';
+  document.getElementById('qText').textContent=it.label;
+  document.getElementById('qHow').textContent=it.how;
+  document.getElementById('qArrow').innerHTML=ic(ARROW_ICON[it.arrow]||'tap');
+  // contesti visuali
+  if(lvl.needsCC){
+    openCC();
+    const ct=document.getElementById('ccTask');
+    ct.className='cctask';
+    ct.innerHTML='<div class="ask">Esegui questo gesto</div><div class="q">'+it.label+'</div>';
+  } else { closeCC(); }
+  document.getElementById('txtBlock').style.display = lvl.showText ? 'block' : 'none';
+  document.getElementById('appCards').style.display = it.showCards ? 'flex' : 'none';
+  document.getElementById('consegna').style.display = (lvl.needsCC) ? 'none':'flex';
+  updateHUD();
+}
+function updateHUD(){
+  document.getElementById('hudScore').textContent=gScore;
+  document.getElementById('hudStreak').textContent=gStreak;
+  const total=levels.reduce((a,l)=>a+l.items.length,0);
+  let done=0; for(let i=0;i<gLevel;i++) done+=levels[i].items.length; done+=gIndex;
+  document.getElementById('progBar').style.width=(done/total*100)+'%';
+}
+function submit(ctx){
+  if(locked) return;
+  const it=gQueue[gIndex];
+  let ok=false; try{ ok=it.match(ctx); }catch(e){ ok=false; }
+  if(ok){ correct(it); }
+  else if(ctx.deliberate){ wrong(); }
+}
+function correct(it){
+  locked=true; gScore+=100+gStreak*10; gStreak++;
+  if(levels[gLevel].needsCC){
+    const ct=document.getElementById('ccTask');
+    if(ct){ ct.classList.add('correct'); ct.querySelector('.q').textContent='Perfetto!'; }
+  } else {
+    const con=document.getElementById('consegna');
+    con.style.display='flex'; con.classList.add('correct');
+    document.getElementById('qText').textContent='Perfetto!';
+    document.getElementById('qHow').textContent='';
+    document.getElementById('qArrow').innerHTML=ic('spark');
+  }
+  flashScreen('flash-ok');
+  updateHUD();
+  setTimeout(()=>{ gIndex++; ask(); }, 800);
+}
+function wrong(){
+  locked=true; gStreak=0; gScore=Math.max(0,gScore-10);
+  const con=document.getElementById('consegna');
+  con.classList.add('wrong');
+  flashScreen('flash-warn');
+  updateHUD();
+  setTimeout(()=>{ locked=false; con.classList.remove('wrong'); }, 620);
+}
+function flashScreen(c){
+  const s=document.getElementById('ipadScreen');
+  s.classList.add(c); setTimeout(()=>s.classList.remove(c),620);
+}
+function showHint(){
+  if(locked) return;
+  const con=document.getElementById('consegna');
+  con.style.display='flex';
+  const arw=document.getElementById('qArrow');
+  arw.style.transition='transform .3s'; arw.style.transform='scale(1.4)';
+  setTimeout(()=>{ arw.style.transform='none';
+    const lvl=levels[gLevel]; if(lvl.needsCC){ document.getElementById('consegna').style.display='none'; }
+  },900);
+}
+function skipItem(){
+  if(locked) return;
+  gStreak=0;
+  gIndex++; ask();
+}
+function endGame(){
+  document.getElementById('endScore').textContent=gScore;
+  let rank='Apprendista dell’iPad';
+  if(gScore>800) rank='Esploratore di gesti';
+  if(gScore>1600) rank='Maestro del multitouch';
+  if(gScore>2400) rank='Leggenda del laboratorio';
+  document.getElementById('endRank').textContent=rank;
+  document.getElementById('endOverlay').classList.add('on');
+}
+function closeEnd(){ document.getElementById('endOverlay').classList.remove('on'); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+/* live clock nella status bar */
+function tickClock(){ const d=new Date(); document.getElementById('clock').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0'); }
+
+initStatic();
+tickClock(); setInterval(tickClock,10000);
+</script>
+</body>
+</html>
