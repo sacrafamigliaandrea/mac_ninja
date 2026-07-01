@@ -216,9 +216,17 @@ button{font-family:var(--head); cursor:pointer}
 .key .sub{position:absolute; top:4px; right:6px; font-size:.6rem; color:var(--light); font-family:var(--mono)}
 .key .sub2{position:absolute; top:4px; left:6px; font-size:.58rem; color:var(--light)}
 .key .mn{font-size:1rem}
-.key .glyph{font-size:1.15rem; line-height:1}
-.k-al-s{align-items:flex-start; padding-left:11px}
-.k-al-e{align-items:flex-end; padding-right:11px}
+.key .glyph{font-size:1.1rem; line-height:1}
+.key .glyph.tiny{font-size:.66rem; font-weight:600}
+.key .klbl{font-size:.66rem; font-weight:600; line-height:1}
+.key .word{font-size:.42rem; line-height:1; margin-top:2px; font-weight:600; letter-spacing:.01em;
+  color:var(--light); white-space:nowrap; text-transform:lowercase}
+.key.armed .word{color:rgba(255,255,255,.82)}
+.kbd-wrap.magic .key .word{color:#9a93a8}
+.kbd-wrap.magic .key.armed .word{color:rgba(255,255,255,.85)}
+.k-al-s{align-items:flex-start; padding-left:10px}
+.k-al-e{align-items:flex-end; padding-right:10px}
+.k-al-s .word, .k-al-e .word{margin-top:3px}
 .arrows{flex:1.7; display:flex; flex-direction:column; gap:2px}
 .arr-r{display:flex; gap:2px; flex:1}
 .arr{background:linear-gradient(var(--keycap),#F4F0FB); border:1px solid var(--keyedge); border-bottom-width:2px; border-radius:5px;
@@ -303,6 +311,39 @@ button{font-family:var(--head); cursor:pointer}
 .kbd-wrap.magic .key:hover{background:linear-gradient(#fff,#e4e6ea)}
 .kbd-wrap.magic .key.armed{background:linear-gradient(var(--brand),var(--brand2)); color:#fff; border-color:var(--brandD)}
 .kbd-wrap.magic .arr{background:linear-gradient(#ffffff,#eceef1); border-color:#c6c8ce; color:#2a2233}
+
+/* ---- Sfida a schermo intero, senza scroll ---- */
+body.game-mode{overflow:hidden}
+body.game-mode .wrap{height:100vh; max-height:100vh; padding-top:14px; padding-bottom:16px;
+  display:flex; flex-direction:column; overflow:hidden}
+body.game-mode .foot{display:none}
+/* topbar compatta: logo ridotto su una riga, pulsanti più piccoli */
+body.game-mode .topbar{margin-bottom:10px; flex:none}
+body.game-mode .logo .mark{width:36px; height:36px; border-radius:10px}
+body.game-mode .logo .mark svg{width:22px; height:22px}
+body.game-mode .logo b{font-size:1.12rem}
+body.game-mode .logo span{display:none}
+body.game-mode .tnav button{padding:7px 13px; font-size:.9rem; border-radius:10px}
+body.game-mode .tnav button svg{width:16px; height:16px}
+/* la scena riempie l'altezza disponibile e si adatta senza scroll */
+body.game-mode #s-game{flex:1 1 auto; min-height:0; display:flex}
+body.game-mode .sim-stage{flex:1; min-height:0; max-width:none; gap:0; justify-content:center}
+body.game-mode .imac{flex:none; max-width:min(560px, 46vh); margin:0}
+body.game-mode .desk-tools{margin:10px 0 6px; flex:none}
+body.game-mode .desk-kbd{flex:none; width:100%; max-width:min(620px, 92vw); perspective:2200px; margin:0}
+body.game-mode .kbd-wrap.magic{transform:rotateX(13deg)}
+/* la tastiera scala in altezza col viewport per stare nella scena */
+body.game-mode .kbd-wrap{padding:1.1vh 1.4vh; gap:.7vh; border-radius:16px}
+body.game-mode .krow{height:5.4vh; gap:.7vh}
+body.game-mode .krow.f{height:4.2vh; margin-bottom:.4vh}
+body.game-mode .key{font-size:1.7vh; border-radius:1vh}
+body.game-mode .key .glyph{font-size:2vh}
+body.game-mode .key .glyph.tiny, body.game-mode .key .klbl{font-size:1.2vh}
+body.game-mode .key .mn{font-size:1.9vh}
+body.game-mode .key .word{font-size:.85vh; margin-top:.3vh}
+body.game-mode .key .sub{font-size:1.1vh; top:.5vh; right:.7vh}
+body.game-mode .key svg{width:2vh; height:2vh}
+body.game-mode .arr{font-size:1.3vh}
 
 /* ---- responsive ---- */
 @media(max-width:960px){
@@ -650,6 +691,7 @@ function go(screen){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('s-'+screen).classList.add('active');
   document.querySelectorAll('#tnav button[data-nav]').forEach(b=>b.classList.toggle('on', b.dataset.nav===screen));
+  document.body.classList.toggle('game-mode', screen==='game');
   if(screen==='game') startGame();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -767,29 +809,30 @@ const KB = [
     {id:'ì',mn:'ì',sub:'^'},{id:'Del',glyph:'⌫',flex:1.7,al:'e'}
   ]},
   {row:'', keys:[
-    {id:'Tab',lbl:'tab',flex:1.6,al:'s'},
+    {id:'Tab',glyph:'⇥',word:'tab',flex:1.6,al:'s'},
     {id:'Q',mn:'Q'},{id:'W',mn:'W'},{id:'E',mn:'E'},{id:'R',mn:'R'},{id:'T',mn:'T'},{id:'Y',mn:'Y'},
     {id:'U',mn:'U'},{id:'I',mn:'I'},{id:'O',mn:'O'},{id:'P',mn:'P'},
     {id:'è',mn:'è',sub:'é'},{id:'+',mn:'+',sub:'*'},{spacer:0.9}
   ]},
   {row:'', keys:[
-    {id:'Caps',lbl:'caps',flex:1.9,al:'s'},
+    {id:'Caps',glyph:'⇪',word:'bloc maiusc',flex:1.9,al:'s'},
     {id:'A',mn:'A'},{id:'S',mn:'S'},{id:'D',mn:'D'},{id:'F',mn:'F'},{id:'G',mn:'G'},{id:'H',mn:'H'},
     {id:'J',mn:'J'},{id:'K',mn:'K'},{id:'L',mn:'L'},
     {id:'ò',mn:'ò',sub:'@'},{id:'à',mn:'à',sub:'#'},{id:'ù',mn:'ù',sub:'§'},
-    {id:'Return',glyph:'⏎',flex:1.6,al:'e'}
+    {id:'Return',glyph:'⏎',word:'invio',flex:1.6,al:'e'}
   ]},
   {row:'', keys:[
-    {id:'Shift',glyph:'⇧',flex:1.3,al:'s'},
+    {id:'Shift',glyph:'⇧',word:'maiusc',flex:1.3,al:'s'},
     {id:'<',mn:'<',sub:'>'},
     {id:'Z',mn:'Z'},{id:'X',mn:'X'},{id:'C',mn:'C'},{id:'V',mn:'V'},{id:'B',mn:'B'},{id:'N',mn:'N'},{id:'M',mn:'M'},
     {id:',',mn:',',sub:';'},{id:'.',mn:'.',sub:':'},{id:'-',mn:'-',sub:'_'},
-    {id:'Shift',glyph:'⇧',flex:2.9,al:'e'}
+    {id:'Shift',glyph:'⇧',word:'maiusc',flex:2.9,al:'e'}
   ]},
   {row:'', keys:[
-    {id:'Fn',lbl:'fn',flex:1},{id:'Ctrl',glyph:'⌃',flex:1},{id:'Opt',glyph:'⌥',flex:1},
-    {id:'Cmd',glyph:'⌘',flex:1.4},{id:'Space',lbl:'',flex:5.5},{id:'Cmd',glyph:'⌘',flex:1.4},
-    {id:'Opt',glyph:'⌥',flex:1},
+    {id:'Fn',glyph:'fn',word:'',flex:1,tiny:true},{id:'Ctrl',glyph:'⌃',word:'control',flex:1.1},
+    {id:'Opt',glyph:'⌥',word:'alt',flex:1.1},
+    {id:'Cmd',glyph:'⌘',word:'cmd',flex:1.4},{id:'Space',lbl:'',flex:5},{id:'Cmd',glyph:'⌘',word:'cmd',flex:1.4},
+    {id:'Opt',glyph:'⌥',word:'alt',flex:1.1},
     {arrows:true}
   ]}
 ];
@@ -814,13 +857,13 @@ function buildKeyboard(){
       }
       let inner='';
       if(k.icon) inner = '<span>'+ic(k.icon)+'</span>';
-      else if(k.glyph) inner = '<span class="glyph">'+k.glyph+'</span>';
+      else if(k.glyph!==undefined) inner = '<span class="glyph'+(k.tiny?' tiny':'')+'">'+k.glyph+'</span>';
       else if(k.mn!==undefined) inner = (k.sub!==undefined?'<span class="sub">'+k.sub+'</span>':'')+'<span class="mn">'+k.mn+'</span>';
-      else inner = k.lbl||'';
+      else if(k.lbl!==undefined) inner = '<span class="klbl">'+k.lbl+'</span>';
+      if(k.word) inner += '<span class="word">'+k.word+'</span>';
       const style = 'flex:'+(k.flex||1);
       const cls = 'key '+(k.al==='s'?'k-al-s':k.al==='e'?'k-al-e':'');
       html += '<div class="'+cls+'" style="'+style+'" data-k="'+esc(k.id)+'" onclick="press(\''+escJs(k.id)+'\')">'
-            + (k.sub!==undefined && k.icon===undefined && k.mn===undefined ? '' : '')
             + inner + '</div>';
     });
     html += '</div>';
