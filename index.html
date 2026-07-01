@@ -261,6 +261,49 @@ button{font-family:var(--head); cursor:pointer}
   background:var(--card); display:grid; place-items:center; color:var(--muted)}
 .close-x svg{width:18px; height:18px}
 
+/* ---- simulatore iMac ---- */
+.sim-stage{display:flex; flex-direction:column; align-items:center; max-width:840px; margin:0 auto}
+.imac{position:relative; width:100%; max-width:720px}
+.imac-svg{width:100%; height:auto; display:block; filter:drop-shadow(0 26px 40px rgba(40,25,90,.28))}
+/* schermo vivo sopra il vetro SVG (rect x98 y42 w604 h364 su viewBox 800x640) */
+.imac-screen{position:absolute; left:12.25%; top:6.5625%; width:75.5%; height:56.875%;
+  background:radial-gradient(120% 140% at 22% 0%, #2a1d55 0%, #1a1230 55%, #120c22 100%);
+  border-radius:5px; overflow:hidden; display:flex; flex-direction:column;
+  box-shadow:inset 0 0 40px rgba(0,0,0,.5); transition:box-shadow .25s}
+.menubar{display:flex; justify-content:space-between; align-items:center; height:22px; flex:none;
+  padding:0 11px; background:rgba(255,255,255,.14); font-size:.62rem; font-family:var(--head);
+  color:rgba(255,255,255,.9)}
+.mb-left{display:flex; align-items:center; gap:8px}
+.mb-left b{color:#fff; font-weight:700}
+.mb-logo{width:9px; height:11px; border-radius:2px 2px 3px 3px; background:#fff; opacity:.9}
+.mb-right{display:flex; align-items:center; gap:12px}
+.mb-right b{color:#fff}
+.mb-lvl{background:rgba(255,255,255,.2); padding:1px 8px; border-radius:999px}
+.prog-thin{height:3px; background:rgba(255,255,255,.12); flex:none}
+.prog-thin i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--gold)); transition:width .4s}
+#prompt{flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;
+  gap:10px; padding:14px 22px; text-align:center; margin:0}
+#prompt .ask{color:rgba(255,255,255,.6); font-family:var(--head); font-weight:500;
+  font-size:clamp(.7rem,1.6vw,.95rem); margin:0}
+#prompt .q{color:#fff; font-family:var(--head); font-weight:800;
+  font-size:clamp(1.1rem,3.4vw,2rem); line-height:1.15; margin:0}
+#prompt.correct .q{color:#3BE8C8}
+#prompt.wrong .q{color:#FFC46B; animation:shake .4s}
+#prompt .combo-live{margin:0}
+#prompt .press-hint{color:rgba(255,255,255,.4); font-size:clamp(.6rem,1.4vw,.8rem); margin:0}
+.imac-screen.screen-flash-ok{box-shadow:inset 0 0 0 3px rgba(18,181,166,.9), inset 0 0 44px rgba(18,181,166,.35)}
+.imac-screen.screen-flash-warn{box-shadow:inset 0 0 0 3px rgba(224,138,30,.9), inset 0 0 44px rgba(224,138,30,.35)}
+/* piano di lavoro + Magic Keyboard in prospettiva */
+.desk-tools{display:flex; gap:10px; justify-content:center; margin:24px 0 6px; flex-wrap:wrap}
+.desk-kbd{width:100%; max-width:720px; perspective:1600px; margin-top:4px}
+.kbd-wrap.magic{transform:rotateX(18deg); transform-origin:center top;
+  background:linear-gradient(#f5f6f8,#d5d7dc);
+  box-shadow:0 30px 42px rgba(40,25,90,.32), inset 0 2px 4px rgba(255,255,255,.6)}
+.kbd-wrap.magic .key{background:linear-gradient(#ffffff,#eceef1); border-color:#c6c8ce; color:#2a2233}
+.kbd-wrap.magic .key:hover{background:linear-gradient(#fff,#e4e6ea)}
+.kbd-wrap.magic .key.armed{background:linear-gradient(var(--brand),var(--brand2)); color:#fff; border-color:var(--brandD)}
+.kbd-wrap.magic .arr{background:linear-gradient(#ffffff,#eceef1); border-color:#c6c8ce; color:#2a2233}
+
 /* ---- responsive ---- */
 @media(max-width:960px){
   .study-layout{grid-template-columns:1fr}
@@ -345,32 +388,66 @@ button{font-family:var(--head); cursor:pointer}
     </div>
   </section>
 
-  <!-- ============ SFIDA ============ -->
+  <!-- ============ SFIDA · SIMULATORE iMac ============ -->
   <section id="s-game" class="screen">
-    <div class="game-head">
-      <div>
-        <h2 style="font-size:1.4rem" id="gameLevelName">Sfida</h2>
-        <p style="margin:2px 0 0; color:var(--muted); font-size:.92rem">Premi la combinazione giusta sulla tastiera</p>
-      </div>
-      <div class="hud">
-        <div class="chip"><div class="k">Sessione</div><div class="v" id="hudLevel">1/10</div></div>
-        <div class="chip acc"><div class="k">Serie</div><div class="v" id="hudStreak">0</div></div>
-        <div class="chip gold"><div class="k">Punti</div><div class="v" id="hudScore">0</div></div>
-      </div>
-    </div>
-    <div class="progress"><i id="progBar"></i></div>
+    <div class="sim-stage">
 
-    <div class="prompt" id="prompt">
-      <div class="ask">Esegui il comando</div>
-      <div class="q" id="qText">Pronto?</div>
-    </div>
-    <div class="combo-live" id="comboLive"></div>
-    <div class="game-tools">
-      <button class="tool" onclick="showHint()"><span id="hintIc"></span>Mostra indizio</button>
-      <button class="tool" onclick="clearInput()"><span id="clearIc"></span>Pulisci</button>
-    </div>
+      <!-- iMac 22" -->
+      <div class="imac">
+        <svg class="imac-svg" viewBox="0 0 800 640" role="img" aria-label="iMac da 22 pollici con la consegna sullo schermo">
+          <defs>
+            <linearGradient id="alu" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fbfbfc"/><stop offset=".5" stop-color="#e5e6ea"/><stop offset="1" stop-color="#c9cace"/>
+            </linearGradient>
+            <linearGradient id="alu2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#e9eaee"/><stop offset="1" stop-color="#bfc1c6"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="400" cy="614" rx="182" ry="16" fill="rgba(30,20,60,.16)"/>
+          <path d="M352 470 C 342 528 326 578 318 602 L 482 602 C 474 578 458 528 448 470 Z" fill="url(#alu2)" stroke="#b4b6bb" stroke-width="1"/>
+          <rect x="314" y="598" width="172" height="12" rx="6" fill="#c6c8cc" stroke="#adafb4" stroke-width="1"/>
+          <rect x="70" y="16" width="660" height="476" rx="24" fill="url(#alu)" stroke="#c2c3c8" stroke-width="1.5"/>
+          <rect x="86" y="30" width="628" height="388" rx="9" fill="#0b0b0f"/>
+          <rect x="98" y="42" width="604" height="364" rx="4" fill="#111018"/>
+          <g transform="translate(400,454)" opacity=".55">
+            <rect x="-13" y="-9" width="26" height="18" rx="5" fill="#b9bbc0"/>
+            <rect x="-9" y="-5" width="4" height="4" rx="1" fill="#e9eaee"/>
+            <rect x="-2" y="-5" width="4" height="4" rx="1" fill="#e9eaee"/>
+            <rect x="5" y="-5" width="4" height="4" rx="1" fill="#e9eaee"/>
+            <rect x="-9" y="2" width="18" height="3" rx="1.5" fill="#e9eaee"/>
+          </g>
+        </svg>
 
-    <div class="kbd-wrap" id="keyboard"></div>
+        <!-- contenuto vivo dentro lo schermo -->
+        <div class="imac-screen">
+          <div class="menubar">
+            <div class="mb-left"><span class="mb-logo"></span><b id="gameLevelName">Sessione 1</b></div>
+            <div class="mb-right">
+              <span>Serie <b id="hudStreak">0</b></span>
+              <span>Punti <b id="hudScore">0</b></span>
+              <span class="mb-lvl" id="hudLevel">1/10</span>
+            </div>
+          </div>
+          <div class="prog-thin"><i id="progBar"></i></div>
+          <div class="screen-body prompt" id="prompt">
+            <div class="ask">Esegui questo comando</div>
+            <div class="q" id="qText">Pronto?</div>
+            <div class="combo-live" id="comboLive"></div>
+            <div class="press-hint">Premi la combinazione sulla tastiera qui sotto</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="desk-tools">
+        <button class="tool" onclick="showHint()"><span id="hintIc"></span>Mostra indizio</button>
+        <button class="tool" onclick="clearInput()"><span id="clearIc"></span>Pulisci</button>
+      </div>
+
+      <!-- Magic Keyboard sul piano, in prospettiva -->
+      <div class="desk-kbd">
+        <div class="kbd-wrap magic" id="keyboard"></div>
+      </div>
+    </div>
   </section>
 
   <div class="foot">Mac Ninja · web app didattica single-file · Andrea Cerioli, Animatore Digitale</div>
@@ -822,14 +899,22 @@ function check(){
   if(ok){
     locked=true; gScore+=100+gStreak*10; gStreak++;
     p.classList.add('correct'); document.getElementById('qText').textContent='Perfetto!';
+    flashScreen('screen-flash-ok');
     updateHUD();
     setTimeout(()=>{ gIndex++; ask(); }, 750);
   } else {
     locked=true; gStreak=0; gScore=Math.max(0,gScore-15);
     p.classList.add('wrong');
+    flashScreen('screen-flash-warn');
     updateHUD();
     setTimeout(()=>{ locked=false; gInput=[]; renderInput(); p.classList.remove('wrong'); }, 650);
   }
+}
+function flashScreen(c){
+  const s=document.querySelector('.imac-screen');
+  if(!s) return;
+  s.classList.add(c);
+  setTimeout(()=>s.classList.remove(c), 650);
 }
 function showHint(){
   if(locked) return;
