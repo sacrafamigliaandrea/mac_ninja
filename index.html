@@ -277,9 +277,10 @@ button{font-family:var(--head); cursor:pointer}
 .imac-screen{position:absolute; left:12.25%; top:6.5625%; width:75.5%; height:56.875%;
   background:radial-gradient(120% 140% at 22% 0%, #2a1d55 0%, #1a1230 55%, #120c22 100%);
   border-radius:5px; overflow:hidden; display:flex; flex-direction:column;
-  box-shadow:inset 0 0 40px rgba(0,0,0,.5); transition:box-shadow .25s}
-.menubar{display:flex; justify-content:space-between; align-items:center; height:22px; flex:none;
-  padding:0 11px; background:rgba(255,255,255,.14); font-size:.62rem; font-family:var(--head);
+  box-shadow:inset 0 0 40px rgba(0,0,0,.5); transition:box-shadow .25s;
+  container-type:size; container-name:screen}
+.menubar{display:flex; justify-content:space-between; align-items:center; height:max(20px,6cqh); flex:none;
+  padding:0 3cqw; background:rgba(255,255,255,.14); font-size:clamp(.55rem,3cqw,.72rem); font-family:var(--head);
   color:rgba(255,255,255,.9)}
 .mb-left{display:flex; align-items:center; gap:8px}
 .mb-left b{color:#fff; font-weight:700}
@@ -289,16 +290,16 @@ button{font-family:var(--head); cursor:pointer}
 .mb-lvl{background:rgba(255,255,255,.2); padding:1px 8px; border-radius:999px}
 .prog-thin{height:3px; background:rgba(255,255,255,.12); flex:none}
 .prog-thin i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--gold)); transition:width .4s}
-#prompt{flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;
-  gap:10px; padding:14px 22px; text-align:center; margin:0}
+#prompt{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center; align-items:center;
+  gap:2.4cqh; padding:2cqh 5cqw; text-align:center; margin:0; overflow:hidden}
 #prompt .ask{color:rgba(255,255,255,.6); font-family:var(--head); font-weight:500;
-  font-size:clamp(.7rem,1.6vw,.95rem); margin:0}
+  font-size:clamp(.6rem,min(4.4cqw,5.6cqh),.98rem); margin:0}
 #prompt .q{color:#fff; font-family:var(--head); font-weight:800;
-  font-size:clamp(1.1rem,3.4vw,2rem); line-height:1.15; margin:0}
+  font-size:min(9cqw,15cqh); line-height:1.12; margin:0}
 #prompt.correct .q{color:#3BE8C8}
 #prompt.wrong .q{color:#FFC46B; animation:shake .4s}
 #prompt .combo-live{margin:0}
-#prompt .press-hint{color:rgba(255,255,255,.4); font-size:clamp(.6rem,1.4vw,.8rem); margin:0}
+#prompt .press-hint{color:rgba(255,255,255,.4); font-size:clamp(.5rem,min(3.4cqw,4.4cqh),.82rem); margin:0}
 .imac-screen.screen-flash-ok{box-shadow:inset 0 0 0 3px rgba(18,181,166,.9), inset 0 0 44px rgba(18,181,166,.35)}
 .imac-screen.screen-flash-warn{box-shadow:inset 0 0 0 3px rgba(224,138,30,.9), inset 0 0 44px rgba(224,138,30,.35)}
 /* piano di lavoro + Magic Keyboard in prospettiva */
@@ -328,22 +329,22 @@ body.game-mode .tnav button svg{width:16px; height:16px}
 /* la scena riempie l'altezza disponibile e si adatta senza scroll */
 body.game-mode #s-game{flex:1 1 auto; min-height:0; display:flex}
 body.game-mode .sim-stage{flex:1; min-height:0; max-width:none; gap:0; justify-content:center}
-body.game-mode .imac{flex:none; max-width:min(560px, 46vh); margin:0}
-body.game-mode .desk-tools{margin:10px 0 6px; flex:none}
-body.game-mode .desk-kbd{flex:none; width:100%; max-width:min(620px, 92vw); perspective:2200px; margin:0}
-body.game-mode .kbd-wrap.magic{transform:rotateX(13deg)}
-/* la tastiera scala in altezza col viewport per stare nella scena */
-body.game-mode .kbd-wrap{padding:1.1vh 1.4vh; gap:.7vh; border-radius:16px}
-body.game-mode .krow{height:5.4vh; gap:.7vh}
-body.game-mode .krow.f{height:4.2vh; margin-bottom:.4vh}
-body.game-mode .key{font-size:1.7vh; border-radius:1vh}
-body.game-mode .key .glyph{font-size:2vh}
-body.game-mode .key .glyph.tiny, body.game-mode .key .klbl{font-size:1.2vh}
-body.game-mode .key .mn{font-size:1.9vh}
-body.game-mode .key .word{font-size:.85vh; margin-top:.3vh}
-body.game-mode .key .sub{font-size:1.1vh; top:.5vh; right:.7vh}
-body.game-mode .key svg{width:2vh; height:2vh}
-body.game-mode .arr{font-size:1.3vh}
+body.game-mode .imac{flex:none; max-width:min(760px, 52vh); margin:0}
+body.game-mode .desk-tools{margin:1.4vh 0 .6vh; flex:none}
+body.game-mode .desk-kbd{flex:none; width:100%; max-width:min(680px, 90vw); perspective:1400px; margin:0}
+body.game-mode .kbd-wrap.magic{transform:rotateX(20deg)}
+/* la tastiera scala in altezza col viewport per stare nella scena, mantenendo la prospettiva */
+body.game-mode .kbd-wrap{padding:1vh 1.3vh; gap:.6vh; border-radius:1.6vh}
+body.game-mode .krow{height:4.7vh; gap:.6vh}
+body.game-mode .krow.f{height:3.7vh; margin-bottom:.3vh}
+body.game-mode .key{font-size:1.5vh; border-radius:.9vh}
+body.game-mode .key .glyph{font-size:1.8vh}
+body.game-mode .key .glyph.tiny, body.game-mode .key .klbl{font-size:1.1vh}
+body.game-mode .key .mn{font-size:1.7vh}
+body.game-mode .key .word{font-size:.8vh; margin-top:.25vh}
+body.game-mode .key .sub{font-size:1vh; top:.5vh; right:.7vh}
+body.game-mode .key svg{width:1.8vh; height:1.8vh}
+body.game-mode .arr{font-size:1.2vh}
 
 /* ---- responsive ---- */
 @media(max-width:960px){
