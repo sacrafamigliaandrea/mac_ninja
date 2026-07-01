@@ -475,7 +475,7 @@ body.game-mode .arr{font-size:1.2vh}
             <div class="ask">Esegui questo comando</div>
             <div class="q" id="qText">Pronto?</div>
             <div class="combo-live" id="comboLive"></div>
-            <div class="press-hint">Premi la combinazione sulla tastiera qui sotto</div>
+            <div class="press-hint">Clicca la combinazione sulla tastiera virtuale qui sotto</div>
           </div>
         </div>
       </div>
@@ -983,16 +983,10 @@ function endGame(){
 }
 function closeEnd(){ document.getElementById('endOverlay').classList.remove('on'); }
 
-/* tastiera fisica reale → gioco */
-document.addEventListener('keydown',e=>{
-  if(!document.getElementById('s-game').classList.contains('active')) return;
-  const map={Meta:'Cmd',Alt:'Opt',Control:'Ctrl',Shift:'Shift',' ':'Space',Enter:'Return',
-    Backspace:'Del',Tab:'Tab',Escape:'Esc',ArrowUp:'Up',ArrowDown:'Down',ArrowLeft:'Left',ArrowRight:'Right'};
-  let k=map[e.key];
-  if(!k && /^[a-zA-Z]$/.test(e.key)) k=e.key.toUpperCase();
-  if(!k && /^[0-9]$/.test(e.key)) k=e.key;
-  if(k && KEYBOARD_KEYS.has(k)){ e.preventDefault(); press(k); }
-});
+/* La tastiera FISICA è volutamente disattivata: in laboratorio uno studente
+   potrebbe eseguire per davvero azioni di sistema del Mac (Spotlight, blocco
+   schermo, spegnimento…), che il browser non può intercettare. Si gioca solo
+   cliccando la tastiera virtuale col mouse. */
 
 function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; }
 
