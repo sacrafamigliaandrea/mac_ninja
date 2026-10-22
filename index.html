@@ -289,6 +289,15 @@ body.game-mode #s-game .dojo{flex:1; min-height:0; justify-content:center}
 .cb-chip .cbn{font-family:var(--head); font-weight:700; font-size:.8rem; line-height:1.15}
 .cb-chip .cbp{font-size:.74rem; color:var(--muted)}
 .cb-chip .pos{margin-left:auto; font-family:var(--head); font-weight:800; color:var(--brand); font-size:1.05rem}
+/* striscia Case durante la sfida */
+.case-mini{display:none; gap:8px; justify-content:center; align-items:center; margin:0 0 8px; flex-wrap:wrap}
+.case-mini.on{display:flex}
+.cm-chip{display:flex; align-items:center; gap:5px; background:var(--card); border:1.5px solid var(--brd);
+  border-radius:999px; padding:3px 10px 3px 5px; font-family:var(--head); font-weight:700; font-size:.78rem; color:var(--ink)}
+.cm-chip svg{width:18px; height:18px}
+.cm-chip .cmp{color:var(--brand)}
+.cm-chip.mine{border-color:var(--brand); box-shadow:0 0 0 2px var(--brandL)}
+body.game-mode .case-mini{margin:0 0 .6vh; flex:none}
 /* barra della decisione: incassa o continua */
 .decide{display:none; gap:2.4cqw; margin:0; flex-wrap:wrap; justify-content:center}
 .decide.on{display:flex}
@@ -548,6 +557,9 @@ body.game-mode .arr{font-size:1.2vh}
     </div>
 
     <div class="sim-stage hidden" id="simStage">
+
+      <!-- punteggi delle Case anche durante la sfida -->
+      <div class="case-mini" id="caseMini"></div>
 
       <!-- iMac 22" -->
       <div class="imac">
@@ -1123,11 +1135,27 @@ function caseJoin(){
   caseCheckIn();
   showDojo();
 }
+let caseData=null;
 function caseFetch(){
   if(!CASE_URL) return;
   fetch(CASE_URL+'?action=case').then(r=>r.json()).then(j=>{ if(j && j.ok) renderCaseBoard(j); }).catch(()=>{});
 }
+/* striscia compatta dentro la sfida: posizione + punti, la propria Casa evidenziata */
+function renderCaseMini(){
+  const el=document.getElementById('caseMini');
+  if(!CASE_URL || !caseData){ el.classList.remove('on'); return; }
+  const rows=caseData.classifica.slice().sort((a,b)=>b.pp-a.pp);
+  rows.forEach((r,i)=>{ r.pos=(i>0 && rows[i-1].pp===r.pp)?rows[i-1].pos:i+1; });
+  el.innerHTML=rows.map(r=>{
+    const i=CASE_LIST.findIndex(c=>c.id===r.casa);
+    return '<span class="cm-chip'+(player.casa===i?' mine':'')+'">'+casaShield(i)
+      +r.pos+'º <span class="cmp">'+r.pp+'</span></span>';
+  }).join('');
+  el.classList.add('on');
+}
 function renderCaseBoard(j){
+  caseData=j;
+  renderCaseMini();
   const el=document.getElementById('caseBoard');
   const rows=j.classifica.slice().sort((a,b)=>b.pp-a.pp);
   // posizioni con ex aequo sui punti posizione cumulativi
@@ -1204,6 +1232,8 @@ function enterRoom(i){
   document.getElementById('dojoPanel').classList.remove('on');
   document.getElementById('simStage').classList.remove('hidden');
   document.getElementById('gameLevelName').textContent = gameLevels[i].name;
+  renderCaseMini();
+  if(CASE_URL && !caseData) caseFetch();
   buildQueue();
   ask();
 }
