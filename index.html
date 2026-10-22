@@ -236,6 +236,44 @@ button{font-family:var(--head); cursor:pointer}
 .arr.armed{background:var(--brand); color:#fff}
 .arr.hint{box-shadow:0 0 0 2px var(--gold)}
 
+/* ---- Dojo: scegli su cosa farti interrogare (sfida frazionata) ---- */
+.dojo{display:none; flex-direction:column; gap:14px; max-width:860px; margin:0 auto; width:100%}
+.dojo.on{display:flex}
+body.game-mode #s-game .dojo{flex:1; min-height:0; justify-content:center}
+.dojo-head h2{font-size:clamp(1.3rem,2.8vh,1.7rem)}
+.dojo-head p{margin:4px 0 0; color:var(--muted); font-size:.95rem}
+.dojo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+.droom{position:relative; text-align:left; background:var(--card); border:1.5px solid var(--brd);
+  border-radius:16px; padding:14px 16px 12px 20px; cursor:pointer; transition:.15s; overflow:hidden;
+  font-family:var(--body); box-shadow:var(--shadowS); display:flex; flex-direction:column; gap:6px}
+.droom:hover{border-color:var(--brand); transform:translateY(-2px); box-shadow:var(--shadow)}
+.droom .bar{position:absolute; left:0; top:0; bottom:0; width:7px}
+.droom .rnum{font-family:var(--head); font-size:.7rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.droom .rtitle{font-family:var(--head); font-weight:700; font-size:1.02rem; color:var(--ink); line-height:1.2}
+.droom .rmeta{display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:.8rem; color:var(--muted)}
+.belt{display:inline-flex; align-items:center; gap:5px; font-family:var(--head); font-weight:600; font-size:.72rem;
+  padding:2px 9px; border-radius:999px; border:1px solid var(--brd); color:var(--ink)}
+.belt i{width:14px; height:5px; border-radius:3px; display:inline-block}
+.droom .rbank{font-family:var(--head); font-weight:700; color:var(--brand); font-size:.86rem}
+.dojo-foot{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.dojo-tot{font-family:var(--head); color:var(--muted)}
+.dojo-tot b{color:var(--brand); font-size:1.15rem}
+.sim-stage.hidden{display:none}
+/* barra della decisione: incassa o continua */
+.decide{display:none; gap:2.4cqw; margin:0; flex-wrap:wrap; justify-content:center}
+.decide.on{display:flex}
+.dbtn{border:none; border-radius:1.8cqh; padding:1.7cqh 3.2cqw; font-weight:700;
+  font-size:clamp(.6rem,min(3.6cqw,4.8cqh),.95rem); line-height:1.15}
+.dbtn.bank{background:linear-gradient(135deg,var(--gold),#E8B64C); color:#3A2A08}
+.dbtn.push{background:linear-gradient(135deg,var(--brand),var(--brand2)); color:#fff}
+.dbtn:hover{filter:brightness(1.07)}
+/* recap stanze nel debrief */
+.end-rooms{text-align:left; margin:14px 0 0; display:flex; flex-direction:column; gap:6px}
+.end-room{display:flex; align-items:center; gap:10px; background:var(--cream); border-radius:12px; padding:7px 12px; font-size:.88rem}
+.end-room .bar{width:6px; height:20px; border-radius:3px; flex:none}
+.end-room b{font-family:var(--head); flex:1}
+.end-room span{color:var(--muted)}
+
 /* ---- fine partita / metacognizione ---- */
 .overlay{position:fixed; inset:0; background:rgba(28,18,52,.55); backdrop-filter:blur(6px); display:none; z-index:80;
   align-items:center; justify-content:center; padding:20px}
@@ -348,6 +386,7 @@ body.game-mode .arr{font-size:1.2vh}
 
 /* ---- responsive ---- */
 @media(max-width:960px){
+  .dojo-grid{grid-template-columns:repeat(2,1fr)}
   .study-layout{grid-template-columns:1fr}
   .sessions{position:static; flex-direction:row; flex-wrap:wrap}
   .sessions .lbl{width:100%}
@@ -357,6 +396,7 @@ body.game-mode .arr{font-size:1.2vh}
 }
 @media(max-width:620px){
   body{font-size:17px}
+  .dojo-grid{grid-template-columns:1fr}
   .kbd-wrap{padding:8px; border-radius:14px}
   .krow{height:38px; gap:4px}
   .key{font-size:.72rem; border-radius:6px}
@@ -433,7 +473,23 @@ body.game-mode .arr{font-size:1.2vh}
 
   <!-- ============ SFIDA · SIMULATORE iMac ============ -->
   <section id="s-game" class="screen">
-    <div class="sim-stage">
+
+    <!-- DOJO: scelta della stanza su cui farsi interrogare -->
+    <div class="dojo" id="dojoPanel">
+      <div class="dojo-head">
+        <h2>Il Dojo · scegli su cosa farti interrogare</h2>
+        <p>Entra in una stanza e rispondi. Dopo ogni combinazione giusta decidi tu:
+           <b>incassi</b> il bottino o <b>continui</b> e lo rischi? Un errore azzera solo
+           il bottino non incassato.</p>
+      </div>
+      <div class="dojo-grid" id="dojoGrid"></div>
+      <div class="dojo-foot">
+        <div class="dojo-tot">Incassato totale: <b id="dojoTot">0</b></div>
+        <button class="tool" onclick="endGame()"><span id="dojoEndIc"></span>Concludi e rifletti</button>
+      </div>
+    </div>
+
+    <div class="sim-stage hidden" id="simStage">
 
       <!-- iMac 22" -->
       <div class="imac">
@@ -466,9 +522,9 @@ body.game-mode .arr{font-size:1.2vh}
           <div class="menubar">
             <div class="mb-left"><span class="mb-logo"></span><b id="gameLevelName">Sessione 1</b></div>
             <div class="mb-right">
-              <span>Serie <b id="hudStreak">0</b></span>
-              <span>Punti <b id="hudScore">0</b></span>
-              <span class="mb-lvl" id="hudLevel">1/10</span>
+              <span>Bottino <b id="hudLoot">0</b></span>
+              <span>Incassato <b id="hudBank">0</b></span>
+              <span class="mb-lvl" id="hudLevel">0/0 combo</span>
             </div>
           </div>
           <div class="prog-thin"><i id="progBar"></i></div>
@@ -476,6 +532,10 @@ body.game-mode .arr{font-size:1.2vh}
             <div class="ask">Esegui questo comando</div>
             <div class="q" id="qText">Pronto?</div>
             <div class="combo-live" id="comboLive"></div>
+            <div class="decide" id="decideBar">
+              <button class="dbtn bank" id="btnBank" onclick="bankRun()">Incassa</button>
+              <button class="dbtn push" id="btnPush" onclick="pushOn()">Continua</button>
+            </div>
             <div class="press-hint">Clicca la combinazione sulla tastiera virtuale qui sotto</div>
           </div>
         </div>
@@ -484,6 +544,7 @@ body.game-mode .arr{font-size:1.2vh}
       <div class="desk-tools">
         <button class="tool" onclick="showHint()"><span id="hintIc"></span>Mostra indizio</button>
         <button class="tool" onclick="clearInput()"><span id="clearIc"></span>Pulisci</button>
+        <button class="tool" onclick="toDojo()"><span id="dojoIc"></span>Torna al dojo</button>
       </div>
 
       <!-- Magic Keyboard sul piano, in prospettiva -->
@@ -500,19 +561,20 @@ body.game-mode .arr{font-size:1.2vh}
 <div class="overlay" id="endOverlay">
   <div class="modal">
     <div class="medal" id="endMedal"></div>
-    <h2>Sfida completata</h2>
+    <h2>Allenamento concluso</h2>
     <div class="final" id="endScore">0</div>
     <div class="rank" id="endRank"></div>
+    <div class="end-rooms" id="endRooms"></div>
     <div class="meta">
       <h4><span id="metaIc"></span>Un minuto per riflettere</h4>
       <ul>
-        <li>Quale scorciatoia ti è entrata subito in testa?</li>
-        <li>Quale hai sbagliato più volte, e perché?</li>
-        <li>Quale userai <b>davvero</b> domani sul Mac del laboratorio?</li>
+        <li>Dove hai <b>incassato</b> al momento giusto, e dove hai rischiato troppo?</li>
+        <li>Quale combinazione ti ha tradito, e perché?</li>
+        <li>Quale scorciatoia userai <b>davvero</b> domani sul Mac del laboratorio?</li>
       </ul>
     </div>
     <div class="row">
-      <button class="mbtn p" onclick="startGame()">Rigioca</button>
+      <button class="mbtn p" onclick="startGame()">Torna al dojo</button>
       <button class="mbtn s" onclick="go('study'); closeEnd()">Torna a studiare</button>
     </div>
   </div>
@@ -537,6 +599,8 @@ body.game-mode .arr{font-size:1.2vh}
     <p><b>Metacognizione</b> — la schermata finale chiude il cerchio con tre domande sull'apprendimento.</p>
     <h4>Struttura</h4>
     <p>10 sessioni tematiche (Sistema, Finder, Finestre, Browser, Testo, Screenshot, Launcher, File, Utility, Ricerca). Studio a sinistra (scheda) + destra (flashcard); Sfida sulla tastiera ISO italiana con feedback immediato — <b>ambra per l'errore, mai rosso</b>.</p>
+    <h4>La Sfida: il Dojo</h4>
+    <p><b>Apprendimento frazionato</b> — lo studente sceglie la stanza su cui farsi interrogare, non subisce il percorso intero. <b>Meccanica "incassa o continua"</b> (push your luck): dopo ogni combinazione corretta decide se mettere al sicuro il bottino o rischiarlo per un valore crescente. La decisione è autovalutazione mascherata: "questa scorciatoia la so davvero?". L'errore azzera solo il bottino non incassato e <b>mostra la combinazione corretta</b>: è informazione, non punizione. Il debrief finale riprende le decisioni, non solo il punteggio.</p>
   </div>
 </div>
 
@@ -717,6 +781,8 @@ function initHome(){
   document.getElementById('navInfo').innerHTML = ic('info')+'Docenti';
   document.getElementById('hintIc').innerHTML = ic('bulb');
   document.getElementById('clearIc').innerHTML = ic('eraser');
+  document.getElementById('dojoIc').innerHTML = ic('mission');
+  document.getElementById('dojoEndIc').innerHTML = ic('brain');
   document.getElementById('metaIc').innerHTML = ic('brain');
   document.getElementById('infoIc').innerHTML = ic('info');
   document.getElementById('closeIc').innerHTML = ic('x');
@@ -942,37 +1008,81 @@ const gameLevels = curriculum
   .map(l=>({name:l.name, color:l.color, items:l.items.filter(c=>isPlayable(c[1]))}))
   .filter(l=>l.items.length>=3);
 
-let gLevel=0, gIndex=0, gScore=0, gStreak=0, gInput=[], gQueue=[], locked=false;
+/* ---- Il Dojo: push your luck ("incassa o continua") ----
+   Lo studente sceglie la STANZA (frazionamento dell'apprendimento) e dentro
+   decide dopo ogni combo giusta se incassare il bottino o rischiarlo.
+   Stato di sessione: per stanza — incassato, combo padroneggiate, giri, errori. */
+let room=-1, gInput=[], locked=false, deciding=false;
+let runPts=0, chain=0, qQueue=[], qIdx=0;
+const dojo = gameLevels.map(()=>({banked:0, mastered:{}, runs:0, errors:0, banks:0, bestRun:0}));
 
-function startGame(){
-  gLevel=0; gScore=0; gStreak=0; closeEnd();
-  loadLevel(0);
+function mcount(i){ return Object.keys(dojo[i].mastered).length; }
+function beltOf(i){
+  const n=gameLevels[i].items.length, m=mcount(i);
+  if(m>=n) return {name:'Cintura nera', c:'#241B33'};
+  if(m>=Math.ceil(n/2)) return {name:'Cintura gialla', c:'#F2A81E'};
+  if(m>=1) return {name:'Cintura bianca', c:'#FFFFFF'};
+  return null;
 }
-function loadLevel(i){
-  if(i>=gameLevels.length){ endGame(); return; }
-  gLevel=i;
-  gQueue = shuffle(gameLevels[i].items.slice());
-  gIndex=0;
+function startGame(){ closeEnd(); showDojo(); }
+function showDojo(){
+  room=-1; deciding=false; runPts=0; chain=0;
+  document.getElementById('simStage').classList.add('hidden');
+  document.getElementById('dojoPanel').classList.add('on');
+  renderDojo();
+}
+function renderDojo(){
+  document.getElementById('dojoGrid').innerHTML = gameLevels.map((l,i)=>{
+    const parts=l.name.split('·');
+    const num=(parts[0]||'').trim(), tit=(parts[1]||l.name).trim();
+    const d=dojo[i], b=beltOf(i);
+    const belt = b
+      ? '<span class="belt"><i style="background:'+b.c+(b.c==='#FFFFFF'?';border:1px solid var(--brd2)':'')+'"></i>'+b.name+'</span>'
+      : '<span class="belt"><i style="background:var(--brd)"></i>Da iniziare</span>';
+    return '<button class="droom" onclick="enterRoom('+i+')">'
+      +'<span class="bar" style="background:'+l.color+'"></span>'
+      +'<span class="rnum">'+esc(num)+'</span>'
+      +'<span class="rtitle">'+esc(tit)+'</span>'
+      +'<span class="rmeta">'+belt+'<span>'+mcount(i)+'/'+l.items.length+' combo</span></span>'
+      +'<span class="rbank">'+d.banked+' punti incassati</span>'
+      +'</button>';
+  }).join('');
+  document.getElementById('dojoTot').textContent = dojo.reduce((a,d)=>a+d.banked,0);
+}
+function enterRoom(i){
+  room=i; runPts=0; chain=0; dojo[i].runs++;
+  document.getElementById('dojoPanel').classList.remove('on');
+  document.getElementById('simStage').classList.remove('hidden');
   document.getElementById('gameLevelName').textContent = gameLevels[i].name;
-  document.getElementById('hudLevel').textContent = (i+1)+'/'+gameLevels.length;
+  buildQueue();
   ask();
 }
+function buildQueue(){
+  // prima le combo mai azzeccate, poi il ripasso delle altre
+  const items=gameLevels[room].items.slice();
+  const fresh=shuffle(items.filter(c=>!dojo[room].mastered[c[0]]));
+  const known=shuffle(items.filter(c=> dojo[room].mastered[c[0]]));
+  qQueue=fresh.concat(known); qIdx=0;
+}
 function ask(){
-  if(gIndex>=gQueue.length){ loadLevel(gLevel+1); return; }
-  locked=false; gInput=[]; clearArmed(); clearHint(); renderInput();
+  if(qIdx>=qQueue.length) buildQueue();
+  locked=false; deciding=false; gInput=[]; clearArmed(); clearHint(); renderInput();
+  document.getElementById('decideBar').classList.remove('on');
   const p=document.getElementById('prompt'); p.className='prompt';
-  document.getElementById('qText').textContent = gQueue[gIndex][0];
+  document.getElementById('qText').textContent = qQueue[qIdx][0];
   updateHUD();
 }
 function updateHUD(){
-  document.getElementById('hudScore').textContent=gScore;
-  document.getElementById('hudStreak').textContent=gStreak;
-  const total=gameLevels.reduce((a,l)=>a+l.items.length,0);
-  let done=0; for(let i=0;i<gLevel;i++) done+=gameLevels[i].items.length; done+=gIndex;
-  document.getElementById('progBar').style.width=(done/total*100)+'%';
+  document.getElementById('hudLoot').textContent=runPts;
+  document.getElementById('hudBank').textContent = room>=0 ? dojo[room].banked : 0;
+  if(room>=0){
+    const n=gameLevels[room].items.length;
+    document.getElementById('hudLevel').textContent = mcount(room)+'/'+n+' combo';
+    document.getElementById('progBar').style.width = (mcount(room)/n*100)+'%';
+  }
 }
 function press(id){
-  if(locked) return;
+  if(locked||deciding) return;
   const idx=gInput.indexOf(id);
   if(idx>=0) gInput.splice(idx,1); else gInput.push(id);
   renderInput(); check();
@@ -987,23 +1097,55 @@ function clearArmed(){ document.querySelectorAll('.armed').forEach(e=>e.classLis
 function clearInput(){ if(locked)return; gInput=[]; renderInput(); }
 
 function check(){
-  const target=gQueue[gIndex][1];
+  const target=qQueue[qIdx][1];
   if(gInput.length!==target.length) return;
   const ok=target.every(k=>gInput.includes(k));
   const p=document.getElementById('prompt');
   if(ok){
-    locked=true; gScore+=100+gStreak*10; gStreak++;
-    p.classList.add('correct'); document.getElementById('qText').textContent='Perfetto!';
+    locked=true; deciding=true;
+    dojo[room].mastered[qQueue[qIdx][0]]=1;
+    chain++; const gain=10*chain; runPts+=gain; qIdx++;
+    p.classList.add('correct');
+    document.getElementById('qText').textContent='Giusta! +'+gain+' nel bottino';
+    document.getElementById('btnBank').textContent='Incassa '+runPts;
+    document.getElementById('btnPush').textContent='Continua · la prossima vale '+(10*(chain+1));
+    document.getElementById('decideBar').classList.add('on');
     flashScreen('screen-flash-ok');
     updateHUD();
-    setTimeout(()=>{ gIndex++; ask(); }, 750);
   } else {
-    locked=true; gStreak=0; gScore=Math.max(0,gScore-15);
+    // errore = informazione: mostra la combinazione corretta; si perde solo il bottino non incassato
+    locked=true; dojo[room].errors++;
+    const lost=runPts; chain=0; runPts=0;
     p.classList.add('wrong');
+    document.getElementById('qText').textContent = lost>0 ? 'Bottino perso: '+lost : 'Non ancora';
+    document.getElementById('comboLive').innerHTML =
+      '<span style="color:rgba(255,255,255,.55);font-size:.8em;margin-right:6px">La combinazione era</span>'+comboHTML(qQueue[qIdx][1]);
+    qQueue[qIdx][1].forEach(k=>{
+      const el=document.querySelector('[data-k="'+cssEsc(k)+'"]');
+      if(el) el.classList.add('hint');
+    });
     flashScreen('screen-flash-warn');
     updateHUD();
-    setTimeout(()=>{ locked=false; gInput=[]; renderInput(); p.classList.remove('wrong'); }, 650);
+    setTimeout(()=>{ clearHint(); qIdx++; ask(); }, 2100);
   }
+}
+function bankRun(){
+  if(room<0||!deciding) return;
+  const d=dojo[room];
+  d.banked+=runPts; d.banks++; d.bestRun=Math.max(d.bestRun,runPts);
+  runPts=0; chain=0; deciding=false;
+  flashScreen('screen-flash-ok');
+  ask();
+}
+function pushOn(){ if(!deciding) return; deciding=false; ask(); }
+function toDojo(){
+  // uscire incassa il bottino in corso: la tensione sta nello scegliere, non nella trappola
+  if(room>=0 && runPts>0){
+    const d=dojo[room];
+    d.banked+=runPts; d.banks++; d.bestRun=Math.max(d.bestRun,runPts);
+    runPts=0; chain=0;
+  }
+  showDojo();
 }
 function flashScreen(c){
   const s=document.querySelector('.imac-screen');
@@ -1012,9 +1154,9 @@ function flashScreen(c){
   setTimeout(()=>s.classList.remove(c), 650);
 }
 function showHint(){
-  if(locked) return;
+  if(locked||deciding||room<0) return;
   clearHint();
-  gQueue[gIndex][1].forEach(k=>{
+  qQueue[qIdx][1].forEach(k=>{
     const el=document.querySelector('[data-k="'+cssEsc(k)+'"]');
     if(el) el.classList.add('hint');
   });
@@ -1024,12 +1166,20 @@ function clearHint(){ document.querySelectorAll('.hint').forEach(e=>e.classList.
 function cssEsc(s){ return String(s).replace(/(['"\\])/g,'\\$1'); }
 
 function endGame(){
-  document.getElementById('endScore').textContent=gScore;
-  let rank='Apprendista del Mac';
-  if(gScore>1200) rank='Utente esperto';
-  if(gScore>2400) rank='Cintura nera di tastiera';
-  if(gScore>3600) rank='Leggenda del laboratorio';
+  const tot=dojo.reduce((a,d)=>a+d.banked,0);
+  document.getElementById('endScore').textContent=tot;
+  let rank='Apprendista del Dojo';
+  if(tot>400) rank='Utente esperto';
+  if(tot>1000) rank='Cintura nera di tastiera';
+  if(tot>1800) rank='Leggenda del laboratorio';
   document.getElementById('endRank').textContent=rank;
+  document.getElementById('endRooms').innerHTML = gameLevels.map((l,i)=>{
+    const d=dojo[i], b=beltOf(i);
+    return '<div class="end-room"><span class="bar" style="background:'+l.color+'"></span>'
+      +'<b>'+esc(l.name.split('·').pop().trim())+'</b>'
+      +'<span>'+mcount(i)+'/'+l.items.length+' combo · '+d.banked+' punti'
+      +(b?' · '+b.name:'')+(d.errors?' · '+(d.errors===1?'1 errore':d.errors+' errori'):'')+'</span></div>';
+  }).join('');
   document.getElementById('endOverlay').classList.add('on');
 }
 function closeEnd(){ document.getElementById('endOverlay').classList.remove('on'); }
