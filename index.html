@@ -259,6 +259,36 @@ body.game-mode #s-game .dojo{flex:1; min-height:0; justify-content:center}
 .dojo-tot{font-family:var(--head); color:var(--muted)}
 .dojo-tot b{color:var(--brand); font-size:1.15rem}
 .sim-stage.hidden{display:none}
+/* check-in Case */
+.checkin{background:var(--card); border:1.5px solid var(--brd); border-radius:18px; padding:20px 22px;
+  box-shadow:var(--shadowS); display:flex; flex-direction:column; gap:14px; max-width:560px; margin:0 auto; width:100%}
+.checkin h3{font-size:1.1rem}
+.ck-row{display:flex; gap:10px; flex-wrap:wrap}
+.ck-row input,.ck-row select{flex:1; min-width:150px; padding:11px 13px; border-radius:12px;
+  border:1.5px solid var(--brd2); font-family:var(--body); font-size:1rem; color:var(--ink); background:#fff; outline:none}
+.ck-row input:focus,.ck-row select:focus{border-color:var(--brand)}
+.ck-case{display:grid; grid-template-columns:repeat(4,1fr); gap:9px}
+.ck-casa{display:flex; flex-direction:column; align-items:center; gap:6px; padding:10px 4px;
+  border:2px solid var(--brd); border-radius:14px; background:var(--card); font-family:var(--head);
+  font-weight:600; font-size:.74rem; color:var(--ink); transition:.12s}
+.ck-casa svg{width:34px; height:34px}
+.ck-casa:hover{transform:translateY(-2px)}
+.ck-casa.sel{border-color:var(--brand); box-shadow:0 0 0 3px var(--brandL)}
+.checkin .warn-msg{color:var(--warn); font-size:.85rem; font-family:var(--head); display:none}
+.checkin .warn-msg.on{display:block}
+/* classifica delle Case */
+.case-board{background:var(--card); border:1.5px solid var(--brd); border-radius:16px; padding:14px 16px;
+  box-shadow:var(--shadowS); display:flex; flex-direction:column; gap:10px}
+.cb-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.cb-head b{font-family:var(--head); font-size:.95rem}
+.cb-head span{font-size:.78rem; color:var(--muted)}
+.cb-row{display:flex; gap:9px; flex-wrap:wrap}
+.cb-chip{flex:1; min-width:120px; display:flex; align-items:center; gap:8px; background:var(--cream);
+  border-radius:12px; padding:8px 10px}
+.cb-chip svg{width:26px; height:26px; flex:none}
+.cb-chip .cbn{font-family:var(--head); font-weight:700; font-size:.8rem; line-height:1.15}
+.cb-chip .cbp{font-size:.74rem; color:var(--muted)}
+.cb-chip .pos{margin-left:auto; font-family:var(--head); font-weight:800; color:var(--brand); font-size:1.05rem}
 /* barra della decisione: incassa o continua */
 .decide{display:none; gap:2.4cqw; margin:0; flex-wrap:wrap; justify-content:center}
 .decide.on{display:flex}
@@ -482,7 +512,35 @@ body.game-mode .arr{font-size:1.2vh}
            <b>incassi</b> il bottino o <b>continui</b> e lo rischi? Un errore azzera solo
            il bottino non incassato.</p>
       </div>
+      <!-- CHECK-IN: chi sei, per quale Casa giochi (solo se la classifica è attiva) -->
+      <div class="checkin" id="checkinCard" style="display:none">
+        <h3>Chi sei? La tua Casa conta su di te</h3>
+        <div class="ck-row">
+          <input id="ckNick" maxlength="14" placeholder="Il tuo nickname" autocomplete="off">
+          <select id="ckClasse">
+            <option value="" disabled selected>Classe…</option>
+            <optgroup label="Primaria">
+              <option>1AP</option><option>1BP</option><option>2AP</option><option>2BP</option>
+              <option>3AP</option><option>3BP</option><option>4AP</option><option>4BP</option>
+              <option>5AP</option><option>5BP</option>
+            </optgroup>
+            <optgroup label="Secondaria">
+              <option>1AS</option><option>1BS</option><option>1CS</option>
+              <option>2AS</option><option>2BS</option><option>2CS</option>
+              <option>3AS</option><option>3BS</option><option>3CS</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="ck-case" id="ckCase"></div>
+        <div class="warn-msg" id="ckWarn">Completa nickname, classe e Casa per entrare.</div>
+        <button class="mbtn p" onclick="caseJoin()">Entra nel Dojo</button>
+      </div>
+
       <div class="dojo-grid" id="dojoGrid"></div>
+
+      <!-- CLASSIFICA DELLE CASE (ufficiale: si aggiorna ogni notte a mezzanotte) -->
+      <div class="case-board" id="caseBoard" style="display:none"></div>
+
       <div class="dojo-foot">
         <div class="dojo-tot">Incassato totale: <b id="dojoTot">0</b></div>
         <button class="tool" onclick="endGame()"><span id="dojoEndIc"></span>Concludi e rifletti</button>
@@ -1008,6 +1066,89 @@ const gameLevels = curriculum
   .map(l=>({name:l.name, color:l.color, items:l.items.filter(c=>isPlayable(c[1]))}))
   .filter(l=>l.items.length>=3);
 
+/* ---- CASE: classifica delle Case via Google Sheets + Apps Script ----
+   Incolla qui l'URL /exec del Web App (istruzioni in MAC-NINJA-casate.gs).
+   Con URL vuoto l'app funziona senza Case: niente check-in, niente widget.
+   Punteggio di Casa PROPORZIONALE ai presenti ("a testa"), consolidato ogni
+   notte a mezzanotte in punti posizione 4/3/2/1 dall'attivatore Apps Script. */
+const CASE_URL = "https://script.google.com/macros/s/AKfycbxI-m9d4m3cSFatU28DedTMtZ1BhnhPbLSuK9eJlGNodjGc3yGNZ4_ObmHbBo3yOCz1tA/exec";
+const CASE_LIST = [
+  {id:'AquilaBlu',    c:'#2458C5'},
+  {id:'CeroGiallo',   c:'#D9A415'},
+  {id:'QuerciaVerde', c:'#2E8B46'},
+  {id:'TassoRosso',   c:'#C2342F'}   /* rosso = identità della Casa, non feedback */
+];
+let player = {nick:'', classe:'', casa:-1, checkedIn:false};
+
+/* stessa persona = stessa chiave anche con maiuscole/spazi/accenti diversi */
+const chiaveGiocatore = (...parti) => parti
+  .map(s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').trim().toLowerCase().replace(/\s+/g,' '))
+  .join('|');
+function casaShield(i, cls){
+  const k = CASE_LIST[i];
+  return '<svg class="'+(cls||'')+'" viewBox="0 0 24 24" role="img" aria-label="'+k.id+'">'
+    +'<path d="M12 2.5 20 5.5 V12 C20 17 16.6 20.3 12 21.8 C7.4 20.3 4 17 4 12 V5.5 Z" fill="'+k.c+'"/>'
+    +'<text x="12" y="15.4" text-anchor="middle" font-family="Lexend,sans-serif" font-size="9.5" font-weight="700" fill="#fff">'+k.id.charAt(0)+'</text></svg>';
+}
+/* fetch no-cors, non image-pixel: l'img tiene accesa la rotellina di caricamento
+   in Safari a ogni invio; la fetch no (il pixel serve solo dove c'è CSP restrittiva) */
+function casePing(params){
+  if(!CASE_URL) return;
+  // fetch CORS semplice (come le letture): la risposta si ignora. NON usare
+  // l'image-pixel (tiene accesa la rotellina in Safari) né no-cors+redirect
+  // manual (l'esecuzione avviene seguendo il redirect: la scrittura si perde).
+  fetch(CASE_URL+'?'+new URLSearchParams(params), {keepalive:true}).catch(function(){});
+}
+function playerChiave(){ return chiaveGiocatore(player.nick, player.classe, CASE_LIST[player.casa].id); }
+function caseCheckIn(){
+  if(player.checkedIn || !CASE_URL || player.casa<0) return;
+  player.checkedIn = true;
+  casePing({action:'presente', chiave:playerChiave(), casa:CASE_LIST[player.casa].id,
+            nick:player.nick, classe:player.classe});
+}
+function caseSendPunti(n){
+  if(!CASE_URL || player.casa<0 || !player.checkedIn || n<=0) return;
+  casePing({action:'punti', chiave:playerChiave(), casa:CASE_LIST[player.casa].id, punti:n});
+}
+function pickCasa(i){
+  player.casa=i;
+  document.querySelectorAll('.ck-casa').forEach((b,k)=>b.classList.toggle('sel', k===i));
+}
+function caseJoin(){
+  const nick=document.getElementById('ckNick').value.trim();
+  const classe=document.getElementById('ckClasse').value;
+  if(!nick || !classe || player.casa<0){ document.getElementById('ckWarn').classList.add('on'); return; }
+  document.getElementById('ckWarn').classList.remove('on');
+  player.nick=nick; player.classe=classe;
+  caseCheckIn();
+  showDojo();
+}
+function caseFetch(){
+  if(!CASE_URL) return;
+  fetch(CASE_URL+'?action=case').then(r=>r.json()).then(j=>{ if(j && j.ok) renderCaseBoard(j); }).catch(()=>{});
+}
+function renderCaseBoard(j){
+  const el=document.getElementById('caseBoard');
+  const rows=j.classifica.slice().sort((a,b)=>b.pp-a.pp);
+  // posizioni con ex aequo sui punti posizione cumulativi
+  rows.forEach((r,i)=>{ r.pos = (i>0 && rows[i-1].pp===r.pp) ? rows[i-1].pos : i+1; });
+  const ieri = {}; (j.ieri||[]).forEach(r=>ieri[r.casa]=r);
+  el.innerHTML =
+    '<div class="cb-head"><b>Classifica delle Case</b>'
+    +'<span>si aggiorna ogni notte a mezzanotte'+(j.lastDay?' · ultima giornata: '+j.lastDay:'')+'</span></div>'
+    +'<div class="cb-row">'+rows.map(r=>{
+      const i=CASE_LIST.findIndex(c=>c.id===r.casa);
+      const y=ieri[r.casa];
+      const sotto = y && y.presenti>0
+        ? Math.round(y.aTesta)+' a testa · '+y.presenti+' giocatori'
+        : (j.oggi && j.oggi[r.casa] ? j.oggi[r.casa]+' in gara oggi' : r.giornate+' giornate');
+      return '<div class="cb-chip">'+casaShield(i)
+        +'<div><div class="cbn">'+r.casa+'</div><div class="cbp">'+r.pp+' punti · '+esc(sotto)+'</div></div>'
+        +'<span class="pos">'+r.pos+'</span></div>';
+    }).join('')+'</div>';
+  el.style.display='flex';
+}
+
 /* ---- Il Dojo: push your luck ("incassa o continua") ----
    Lo studente sceglie la STANZA (frazionamento dell'apprendimento) e dentro
    decide dopo ogni combo giusta se incassare il bottino o rischiarlo.
@@ -1029,6 +1170,15 @@ function showDojo(){
   room=-1; deciding=false; runPts=0; chain=0;
   document.getElementById('simStage').classList.add('hidden');
   document.getElementById('dojoPanel').classList.add('on');
+  // con la classifica delle Case attiva, prima si fa il check-in
+  const needCk = CASE_URL && !player.checkedIn;
+  document.getElementById('checkinCard').style.display = needCk ? 'flex' : 'none';
+  document.getElementById('dojoGrid').style.display = needCk ? 'none' : 'grid';
+  if(needCk && !document.getElementById('ckCase').childElementCount){
+    document.getElementById('ckCase').innerHTML = CASE_LIST.map((k,i)=>
+      '<button type="button" class="ck-casa" onclick="pickCasa('+i+')">'+casaShield(i)+k.id+'</button>').join('');
+  }
+  if(!needCk) caseFetch();
   renderDojo();
 }
 function renderDojo(){
@@ -1133,6 +1283,7 @@ function bankRun(){
   if(room<0||!deciding) return;
   const d=dojo[room];
   d.banked+=runPts; d.banks++; d.bestRun=Math.max(d.bestRun,runPts);
+  caseSendPunti(runPts);   // l'incasso è il contributo alla Casa
   runPts=0; chain=0; deciding=false;
   flashScreen('screen-flash-ok');
   ask();
@@ -1143,6 +1294,7 @@ function toDojo(){
   if(room>=0 && runPts>0){
     const d=dojo[room];
     d.banked+=runPts; d.banks++; d.bestRun=Math.max(d.bestRun,runPts);
+    caseSendPunti(runPts);
     runPts=0; chain=0;
   }
   showDojo();
